@@ -14,9 +14,6 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public User searchUser(String email) {
-        return userRepository.findByEmail(email);
-    }
 
     @Transactional
     public User saveUser(User user) {
@@ -24,8 +21,5 @@ public class UserService {
          return user;
     }
 
-    public User searchNickname(String nickname) {
-        return userRepository.findByNickname(nickname);
-    }
 
 }

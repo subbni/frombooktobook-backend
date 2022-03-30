@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @EnableJpaAuditing
 @SpringBootApplication
-//@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
 public class FrombooktobookBackendApplication {
 
 	public static void main(String[] args) {

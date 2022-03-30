@@ -35,31 +35,5 @@ public class UserControllerTest {
         userRepository.deleteAll();
     }
 
-    @Test
-    public void user_저장() throws Exception {
-        //given
-        String email = "slfkak@gamil.com";
-        String nickname= "lifeisegg";
-        String password = "mypassword";
 
-        UserCreateRequestDto requestDto = UserCreateRequestDto.builder()
-                .email(email)
-                .nickname(nickname)
-                .password(password)
-                .build();
-        String url = "http://localhost:"+port+"/user/register";
-
-        // when
-        ResponseEntity<UserResponseDto> responseEntity = restTemplate
-                .postForEntity(url,requestDto,UserResponseDto.class);
-
-        // userController.createUser(requestDto);
-
-        //then
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-        User user = userRepository.findByEmail(email);
-        assertThat(user.getNickname()).isEqualTo(nickname);
-
-    }
 }

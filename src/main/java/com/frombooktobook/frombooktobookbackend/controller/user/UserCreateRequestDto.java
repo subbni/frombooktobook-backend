@@ -9,21 +9,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserCreateRequestDto {
    private String email;
-   private String nickname;
-   private String password;
+   private String name;
+
 
    @Builder
-   public UserCreateRequestDto(String email, String nickname, String password) {
+   public UserCreateRequestDto(String email, String name) {
       this.email=email;
-      this.nickname=nickname;
-      this.password= password;
+      this.name=name;
    }
 
    public User toEntity() {
       return User.builder()
               .email(email)
-              .nickname(nickname)
-              .password(password)
+              .name(name)
               .build();
    }
 

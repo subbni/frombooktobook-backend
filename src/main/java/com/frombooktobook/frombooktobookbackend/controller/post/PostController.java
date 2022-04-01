@@ -35,12 +35,12 @@ public class PostController {
                 .body(new PostResponseDto(requestDto.toEntity()));
     }
 
-//    // 내림차순 : 제일 최신에 작성된 순서대로 (id가 큰 순서대로)
-//    @GetMapping("/post")
-//    public ResponseEntity<List<PostListResponseDto>> postList() {
-//        return ResponseEntity.ok()
-//                .body(postService.findAllByDesc());
-//    }
+    // 내림차순 : 제일 최신에 작성된 순서대로 (id가 큰 순서대로)
+    @GetMapping("/post")
+    public ResponseEntity<List<PostListResponseDto>> postList() {
+        return ResponseEntity.ok()
+                .body(postService.findAllByDesc());
+    }
 
 
 }

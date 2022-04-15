@@ -1,5 +1,6 @@
 package com.frombooktobook.frombooktobookbackend.controller.auth;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,4 +19,10 @@ public class LoginRequestDto {
 
     @NotBlank
     private String password;
+
+    @Builder
+    public LoginRequestDto(String email,String password) {
+        this.email=email;
+        this.password=password;
+    }
 }

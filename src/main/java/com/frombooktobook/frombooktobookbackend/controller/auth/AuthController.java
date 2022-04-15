@@ -4,7 +4,7 @@ import com.frombooktobook.frombooktobookbackend.domain.user.ProviderType;
 import com.frombooktobook.frombooktobookbackend.domain.user.User;
 import com.frombooktobook.frombooktobookbackend.domain.user.UserRepository;
 import com.frombooktobook.frombooktobookbackend.exception.BadRequestException;
-import com.frombooktobook.frombooktobookbackend.jwt.TokenProvider;
+import com.frombooktobook.frombooktobookbackend.security.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,7 +28,7 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private TokenProvider tokenProvider;
+    private final TokenProvider tokenProvider;
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponseDto> authenticateUser(@RequestBody LoginRequestDto loginRequest) {
@@ -55,7 +55,7 @@ public class AuthController {
                 User.builder()
                 .email(requestDto.getEmail())
                 .name(requestDto.getName())
-                .password(requestDto.getPassword())
+                .password(passwordEncoder.encode(requestDto.getPassword()))
                 .providerType(ProviderType.LOCAL)
                 .build());
 

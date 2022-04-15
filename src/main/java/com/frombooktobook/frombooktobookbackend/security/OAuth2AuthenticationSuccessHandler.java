@@ -2,7 +2,7 @@ package com.frombooktobook.frombooktobookbackend.security;
 
 import com.frombooktobook.frombooktobookbackend.config.AppProperties;
 import com.frombooktobook.frombooktobookbackend.exception.BadRequestException;
-import com.frombooktobook.frombooktobookbackend.jwt.TokenProvider;
+import com.frombooktobook.frombooktobookbackend.security.jwt.TokenProvider;
 import com.frombooktobook.frombooktobookbackend.util.CookieUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Optional;
-import java.util.OptionalInt;
 
 import static com.frombooktobook.frombooktobookbackend.security.HttpCookieOAuth2AuthorizationRequestRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
 

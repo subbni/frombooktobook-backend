@@ -1,4 +1,4 @@
-package com.frombooktobook.frombooktobookbackend.jwt;
+package com.frombooktobook.frombooktobookbackend.security.jwt;
 
 import com.frombooktobook.frombooktobookbackend.config.AppProperties;
 import com.frombooktobook.frombooktobookbackend.security.JwtUserDetails;
@@ -16,18 +16,24 @@ import java.util.Date;
 public class TokenProvider {
     private static final Logger logger = LoggerFactory.getLogger(TokenProvider.class);
 
+    private static long TOKEN_EXPIRE_MSEC = 864000000;
+    private static String TOKEN_SECRET_KEY = "lskdjfiawjfojals286k2345flkasdncvjknawoe3234ifjsfjalwejf";
     private AppProperties appProperties;
 
+    public TokenProvider (AppProperties appProperties) {
+        this.appProperties = appProperties;
+    }
     public String createToken(Authentication authentication) {
         JwtUserDetails jwtUserDetails = (JwtUserDetails) authentication.getPrincipal();
         Date now = new Date();
-        Date expireDate = new Date(now.getTime() + appProperties.getAuth().getTokenExpirationMsec());
+
+        Date expireDate = new Date(now.getTime() + TOKEN_EXPIRE_MSEC);
 
         return Jwts.builder()
-                .setSubject(Long.toString(jwtUserDetails.getId()))
+                .setSubject(jwtUserDetails.getId().toString())
                 .setIssuedAt(now)
                 .setExpiration(expireDate)
-                .signWith(SignatureAlgorithm.HS256, appProperties.getAuth().getTokenSecret())
+                .signWith(SignatureAlgorithm.HS256, TOKEN_SECRET_KEY)
                 .compact();
     }
 

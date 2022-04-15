@@ -112,6 +112,6 @@ public class JwtUserDetails implements UserDetails, OAuth2User {
     }
 
     public void setAttributes(Map<String, Object> attributes) {
-        this.authorities=authorities;
+        this.attributes = attributes;
     }
 }

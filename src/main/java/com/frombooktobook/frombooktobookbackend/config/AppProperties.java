@@ -13,14 +13,14 @@ public class AppProperties {
 
     public static class Auth {
         private String tokenSecret;
-        private Long tokenExpirationMsec;
+        private long tokenExpirationMsec;
 
         public String getTokenSecret() {
             return tokenSecret;
         }
 
-        public void setTokenSecret(String tokenScret) {
-            this.tokenSecret = tokenScret;
+        public void setTokenSecret(String tokenSceret) {
+            this.tokenSecret = tokenSceret;
         }
 
         public long getTokenExpirationMsec() {

@@ -1,9 +1,10 @@
 package com.frombooktobook.frombooktobookbackend.config;
 
-import com.frombooktobook.frombooktobookbackend.jwt.TokenAuthenticationFilter;
+import com.frombooktobook.frombooktobookbackend.security.jwt.TokenAuthenticationFilter;
 import com.frombooktobook.frombooktobookbackend.security.*;
 import com.frombooktobook.frombooktobookbackend.security.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,7 +20,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 
-@RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(
@@ -28,11 +28,16 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
         prePostEnabled = true
 )
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    private final CustomUserDetailsService customUserDetailsService;
-    private final CustomOauth2UserService customOauth2UserService;
-    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
-    private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailurehandler;
-    private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
+    @Autowired
+    private  CustomUserDetailsService customUserDetailsService;
+    @Autowired
+    private  CustomOauth2UserService customOauth2UserService;
+    @Autowired
+    private  OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+    @Autowired
+    private  OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailurehandler;
+    @Autowired
+    private  HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
 
     @Bean
     public TokenAuthenticationFilter tokenAuthenticationFilter() {
@@ -65,7 +70,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean(BeanIds.AUTHENTICATION_MANAGER)
     @Override
-    public AuthenticationManager authenticationManager() throws Exception {
+    public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
 
@@ -77,6 +82,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .csrf()
+                .disable()
+                .formLogin()
                 .disable()
                 .httpBasic()
                 .disable()

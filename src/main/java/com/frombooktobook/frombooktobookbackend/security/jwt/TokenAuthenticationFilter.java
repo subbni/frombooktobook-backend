@@ -1,4 +1,4 @@
-package com.frombooktobook.frombooktobookbackend.jwt;
+package com.frombooktobook.frombooktobookbackend.security.jwt;
 
 
 import com.frombooktobook.frombooktobookbackend.security.CustomUserDetailsService;

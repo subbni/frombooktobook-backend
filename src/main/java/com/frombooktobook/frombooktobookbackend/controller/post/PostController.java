@@ -4,6 +4,7 @@ import com.frombooktobook.frombooktobookbackend.domain.post.Post;
 import com.frombooktobook.frombooktobookbackend.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,7 +16,7 @@ public class PostController {
 
     private final PostService postService;
 
-
+    @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/post/write")
     public ResponseEntity<PostResponseDto> CreatePost(
             @RequestBody PostCreateRequestDto requestDto) {

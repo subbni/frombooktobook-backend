@@ -13,10 +13,11 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserService userService;
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/me")
-    @PreAuthorize("hasRole('USER')")
     public User getCurrentUser(@CurrentUser JwtUserDetails userDetails) {
         return userService.getCurrentUser(userDetails.getId());
     }
+
 
 }

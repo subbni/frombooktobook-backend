@@ -38,9 +38,9 @@ public class JwtUserDetails implements UserDetails, OAuth2User {
     }
 
     public static JwtUserDetails create(User user, Map<String,Object> attributes) {
-        JwtUserDetails userDetails = JwtUserDetails.create(user);
-        userDetails.setAttributes(attributes);
-        return userDetails;
+        JwtUserDetails jwtUserDetails = JwtUserDetails.create(user);
+        jwtUserDetails.setAttributes(attributes);
+        return jwtUserDetails;
     }
 
     /**

@@ -22,6 +22,7 @@ Oauth2 공급자로부터 액세스 토큰을 얻은 후 실행될 클래스.
 OAuth2 제공 업체에서 받아온 사용자의 세부 정보를 처음으로 fetch.
 로그인시 사용자 정보로 서버에 관련해서 해야하는 일들 수행
  */
+
 @Service
 @RequiredArgsConstructor
 public class CustomOauth2UserService extends DefaultOAuth2UserService {
@@ -54,12 +55,15 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
 
         // 이미 회원가입 된 사용자라면
         if(savedUser!=null) {
+            System.out.println("이미 회원가입 된 사용자입니다.");
             if(providerType != savedUser.getProviderType()) {
+
                 // OAuthProviderMissMatchException 만들어서 에러 띄우기
             }
             savedUser = updateUser(savedUser, userInfo);
         } else {
             // 회원가입 되어 있지 않은 사용자
+            System.out.println("신규 사용자입니다.");
             savedUser = registerUser(userInfo, providerType);
         }
 

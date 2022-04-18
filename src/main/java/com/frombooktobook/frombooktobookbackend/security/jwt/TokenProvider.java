@@ -48,7 +48,7 @@ public class TokenProvider {
     // 토큰 정보 검증
     public boolean validateToken(String authToken) {
         try {
-            Jwts.parser().setSigningKey(appProperties.getAuth().getTokenSecret()).parseClaimsJws(authToken);
+            Jwts.parser().setSigningKey(TOKEN_SECRET_KEY).parseClaimsJws(authToken);
             return true;
         } catch (SignatureException ex) {
             logger.error("Invalid JWT signature");
@@ -66,7 +66,7 @@ public class TokenProvider {
 
     private Claims parseClaims(String token) {
         Claims claims = Jwts.parser()
-                .setSigningKey(appProperties.getAuth().getTokenSecret())
+                .setSigningKey(TOKEN_SECRET_KEY)
                 .parseClaimsJws(token)
                 .getBody();
         return claims;

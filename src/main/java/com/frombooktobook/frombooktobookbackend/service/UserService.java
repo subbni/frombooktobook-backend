@@ -24,6 +24,7 @@ public class UserService {
         return userRepository.findById(id)
                 .orElseThrow(()->new ResourceNotFoundException("User","id",id));
     }
+
     @Transactional
     public User updateMember(User member, String name, String imgUrl) {
         member.update(name,imgUrl);

@@ -1,5 +1,7 @@
 package com.frombooktobook.frombooktobookbackend.config;
 
+import com.frombooktobook.frombooktobookbackend.security.jwt.JwtAccessDeniedHandler;
+import com.frombooktobook.frombooktobookbackend.security.jwt.JwtAuthenticationEntryPoint;
 import com.frombooktobook.frombooktobookbackend.security.jwt.TokenAuthenticationFilter;
 import com.frombooktobook.frombooktobookbackend.security.*;
 import com.frombooktobook.frombooktobookbackend.security.CustomUserDetailsService;
@@ -12,6 +14,7 @@ import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -38,6 +41,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private  OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailurehandler;
     @Autowired
     private  HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
+    @Autowired
+    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    @Autowired
+    private JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
     @Bean
     public TokenAuthenticationFilter tokenAuthenticationFilter() {
@@ -56,6 +63,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new HttpCookieOAuth2AuthorizationRequestRepository();
     }
 
+    @Override
+    public void configure(WebSecurity web) {
+        web.ignoring()
+                .antMatchers("/h2/console/**","/favicon.ico");
+    }
     @Override
     public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
         authenticationManagerBuilder
@@ -83,6 +95,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .csrf()
                 .disable()
+                .exceptionHandling()
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .accessDeniedHandler(jwtAccessDeniedHandler)
+                .and()
                 .formLogin()
                 .disable()
                 .httpBasic()
@@ -92,6 +108,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/",
+                        "/h2-console/**",
                         "/error",
                         "/favicon.ico",
                         "/**/*.png",
@@ -103,6 +120,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.js")
                 .permitAll()
                 .antMatchers("/auth/**","/oauth2/**")
+                .permitAll()
+                // 기본 게시물 둘러보기는 누구나 가능하도록
+                .antMatchers("/post")
                 .permitAll()
                 .anyRequest()
                 .authenticated()
@@ -121,6 +141,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .successHandler(oAuth2AuthenticationSuccessHandler)
                 .failureHandler(oAuth2AuthenticationFailurehandler);
 
+        // h2-console을 위해 추가
+        http.headers().frameOptions().disable();
         // custom Token based authentication filter 추가
         http.addFilterBefore(tokenAuthenticationFilter(),UsernamePasswordAuthenticationFilter.class);
     }

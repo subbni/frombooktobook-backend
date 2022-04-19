@@ -64,11 +64,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    public void configure(WebSecurity web) {
-        web.ignoring()
-                .antMatchers("/h2/console/**","/favicon.ico");
-    }
-    @Override
     public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
         authenticationManagerBuilder
                 .userDetailsService(customUserDetailsService)
@@ -141,8 +136,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .successHandler(oAuth2AuthenticationSuccessHandler)
                 .failureHandler(oAuth2AuthenticationFailurehandler);
 
-        // h2-console을 위해 추가
-        http.headers().frameOptions().disable();
         // custom Token based authentication filter 추가
         http.addFilterBefore(tokenAuthenticationFilter(),UsernamePasswordAuthenticationFilter.class);
     }

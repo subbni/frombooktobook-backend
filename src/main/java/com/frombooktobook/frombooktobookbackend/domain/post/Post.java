@@ -1,6 +1,7 @@
 package com.frombooktobook.frombooktobookbackend.domain.post;
 
 import com.frombooktobook.frombooktobookbackend.domain.BaseTimeEntity;
+import com.frombooktobook.frombooktobookbackend.domain.user.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +17,9 @@ public class Post extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // private String user;
+    @ManyToOne
+    @JoinColumn(name = "USER_ID")
+    private User writer;
 
     @Column(nullable = false)
     private String bookName;
@@ -30,7 +33,8 @@ public class Post extends BaseTimeEntity {
     private String content;
 
     @Builder
-    public Post(String bookName, String bookAuthor, int rate, String content, String title) {
+    public Post(User writer, String bookName, String bookAuthor, int rate, String content, String title) {
+        this.writer = writer;
         this.bookName = bookName;
         this.bookAuthor = bookAuthor;
         this.rate=rate;

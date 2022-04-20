@@ -13,7 +13,9 @@ import javax.validation.constraints.Email;
 @NoArgsConstructor
 @Entity
 public class User extends BaseTimeEntity {
+
     @Id
+    @Column(name="USER_ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 

@@ -1,6 +1,7 @@
 package com.frombooktobook.frombooktobookbackend.controller.auth;
 
 import com.frombooktobook.frombooktobookbackend.domain.user.ProviderType;
+import com.frombooktobook.frombooktobookbackend.domain.user.Role;
 import com.frombooktobook.frombooktobookbackend.domain.user.User;
 import com.frombooktobook.frombooktobookbackend.domain.user.UserRepository;
 import com.frombooktobook.frombooktobookbackend.exception.BadRequestException;
@@ -40,9 +41,15 @@ public class AuthController {
         );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        User user;
+        if(!userRepository.existsByEmail(loginRequest.getEmail())){
+            throw new BadRequestException("존재하지 않는 이메일 계정입니다.");
+        } else {
+           user =  userRepository.findByEmail(loginRequest.getEmail()).orElse(null);
+        }
 
         String token = tokenProvider.createToken(authentication);
-        return ResponseEntity.ok(new AuthResponseDto(token));
+        return ResponseEntity.ok(new AuthResponseDto(token,user.getName(),user.getEmail()));
     }
 
     @PostMapping("/register")
@@ -57,6 +64,7 @@ public class AuthController {
                 .name(requestDto.getName())
                 .password(passwordEncoder.encode(requestDto.getPassword()))
                 .providerType(ProviderType.LOCAL)
+                .role(Role.USER)
                 .build());
 
         URI location = ServletUriComponentsBuilder

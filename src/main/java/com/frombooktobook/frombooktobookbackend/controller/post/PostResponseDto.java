@@ -9,6 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class PostResponseDto {
+    private String writerName;
     private String bookName;
     private String bookAuthor;
     private String title;
@@ -16,6 +17,7 @@ public class PostResponseDto {
     private int rate;
 
     public PostResponseDto(Post post) {
+        this.writerName = post.getWriter().getName();
         this.bookName=post.getBookName();
         this.bookAuthor=post.getBookAuthor();
         this.title=post.getTitle();

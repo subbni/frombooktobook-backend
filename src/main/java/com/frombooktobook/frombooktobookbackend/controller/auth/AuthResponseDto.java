@@ -9,10 +9,16 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class AuthResponseDto {
+    private String name;
+    private String email;
     private String accessToken;
     private String tokenType="Bearer";
 
-    public AuthResponseDto(String accessToken) {
+    public AuthResponseDto(String accessToken, String name, String email) {
         this.accessToken = accessToken;
+        this.name = name;
+        this.email=email;
     }
+
+
 }

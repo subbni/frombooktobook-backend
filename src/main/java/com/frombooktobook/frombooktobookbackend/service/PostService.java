@@ -23,11 +23,11 @@ public class PostService {
          return post;
     }
 
-//    public PostResponseDto findById(Long id) {
-//        Post post = postRepository.findById(id).orElseThrow(()->
-//                new IllegalArgumentException("해당 게시글이 없습니다. id=" +id));
-//        return new PostResponseDto(post);
-//    }
+    public PostResponseDto findById(Long id) {
+        Post post = postRepository.findById(id).orElseThrow(()->
+                new IllegalArgumentException("해당 게시글이 없습니다. id=" +id));
+        return new PostResponseDto(post);
+    }
 
     public List<PostListResponseDto> findAllByDesc() {
         return postRepository.findAll(Sort.by(Sort.Direction.DESC,"id")).stream()

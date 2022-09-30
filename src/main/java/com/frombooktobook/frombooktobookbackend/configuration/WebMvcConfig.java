@@ -1,4 +1,4 @@
-package com.frombooktobook.frombooktobookbackend.config;
+package com.frombooktobook.frombooktobookbackend.configuration;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -11,10 +11,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        // 일단 모든 origin을 활성화 하였음.
         registry.addMapping("/**")
                 .allowedOrigins("*")
-                .allowedMethods("GET","POST","PUT","PATCH","DELETE","OPTIONS")
+                .allowedMethods("GET","HEAD","POST","PUT","PATCH","DELETE","OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true)
                 .maxAge(MAX_AGE_SECS);

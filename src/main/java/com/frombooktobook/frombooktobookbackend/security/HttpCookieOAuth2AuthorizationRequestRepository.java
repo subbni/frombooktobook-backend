@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-// 인증 요청을 쿠키에 저장하고 검색하는 기능을 제공
+// 인증 요청을 쿠키에 저장하고 검색
 @Component
 public class HttpCookieOAuth2AuthorizationRequestRepository implements AuthorizationRequestRepository<OAuth2AuthorizationRequest> {
 

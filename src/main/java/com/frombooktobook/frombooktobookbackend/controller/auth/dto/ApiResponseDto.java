@@ -1,4 +1,4 @@
-package com.frombooktobook.frombooktobookbackend.controller.auth;
+package com.frombooktobook.frombooktobookbackend.controller.auth.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

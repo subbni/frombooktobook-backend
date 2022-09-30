@@ -4,8 +4,8 @@ import com.frombooktobook.frombooktobookbackend.domain.user.User;
 import com.frombooktobook.frombooktobookbackend.domain.user.UserRepository;
 import com.frombooktobook.frombooktobookbackend.domain.user.ProviderType;
 import com.frombooktobook.frombooktobookbackend.domain.user.Role;
-import com.frombooktobook.frombooktobookbackend.security.user.OAuth2UserInfo;
-import com.frombooktobook.frombooktobookbackend.security.user.OAuth2UserInfoFactory;
+import com.frombooktobook.frombooktobookbackend.security.userinfo.OAuth2UserInfo;
+import com.frombooktobook.frombooktobookbackend.security.userinfo.OAuth2UserInfoFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -14,8 +14,6 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.security.core.AuthenticationException;
-
-import java.util.Optional;
 
 /*
 Oauth2 공급자로부터 액세스 토큰을 얻은 후 실행될 클래스.
@@ -33,7 +31,7 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        System.out.println("attributes"+ super.loadUser(userRequest).getAttributes());
+       // System.out.println("attributes"+ super.loadUser(userRequest).getAttributes());
         OAuth2User user = super.loadUser(userRequest);
 
         try{
@@ -55,18 +53,14 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
 
         // 이미 회원가입 된 사용자라면
         if(savedUser!=null) {
-            System.out.println("이미 회원가입 된 사용자입니다.");
             if(providerType != savedUser.getProviderType()) {
-
                 // OAuthProviderMissMatchException 만들어서 에러 띄우기
             }
             savedUser = updateUser(savedUser, userInfo);
         } else {
             // 회원가입 되어 있지 않은 사용자
-            System.out.println("신규 사용자입니다.");
             savedUser = registerUser(userInfo, providerType);
         }
-
         return JwtUserDetails.create(savedUser,oAuth2User.getAttributes());
     }
 

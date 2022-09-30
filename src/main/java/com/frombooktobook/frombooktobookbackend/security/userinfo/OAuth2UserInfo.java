@@ -1,4 +1,4 @@
-package com.frombooktobook.frombooktobookbackend.security.user;
+package com.frombooktobook.frombooktobookbackend.security.userinfo;
 
 import java.util.Map;
 

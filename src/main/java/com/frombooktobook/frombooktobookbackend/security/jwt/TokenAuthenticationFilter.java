@@ -40,20 +40,20 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         try {
             String jwt = getJwtFromRequest(request);
 
+            // 토큰이 존재하며, 유효한 경우 수동으로 인증 설정
             if(StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
                 Long userId =tokenProvider.getUserIdFromToken(jwt);
-                System.out.println("userId = "+userId);
                 UserDetails userDetails = customUserDetailsService.loadUserById(userId);
-                System.out.println("userDetails:" +userDetails);
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
+                // Context에 인증을 설정하여 현재 사용자가 인증 되도록 함 => Spring Security 설정 성공으로 넘어감.
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception e) {
             logger.error("Could not set user authentication in security context", e);
         }
 
+        // jwt 없을 경우 (ex: 첫 로그인인 경우) 기존 로직 실행
         filterChain.doFilter(request,response);
     }
 

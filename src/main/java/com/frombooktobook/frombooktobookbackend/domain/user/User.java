@@ -2,12 +2,15 @@ package com.frombooktobook.frombooktobookbackend.domain.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.frombooktobook.frombooktobookbackend.domain.BaseTimeEntity;
+import com.frombooktobook.frombooktobookbackend.domain.liked.Liked;
+import com.frombooktobook.frombooktobookbackend.domain.post.Post;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -55,6 +58,11 @@ public class User extends BaseTimeEntity {
         return this;
     }
 
+    public User setPassword(String password) {
+        this.password = password;
+        return this;
+    }
+
     public User setImgUrl(String imgUrl) {
         this.imgUrl = imgUrl;
         return this;
@@ -69,5 +77,4 @@ public class User extends BaseTimeEntity {
     public String getRoleKey() {
         return this.role.getKey();
     }
-
 }

@@ -1,6 +1,6 @@
 package com.frombooktobook.frombooktobookbackend.security;
 
-import com.frombooktobook.frombooktobookbackend.config.AppProperties;
+import com.frombooktobook.frombooktobookbackend.configuration.AppProperties;
 import com.frombooktobook.frombooktobookbackend.exception.BadRequestException;
 import com.frombooktobook.frombooktobookbackend.security.jwt.TokenProvider;
 import com.frombooktobook.frombooktobookbackend.util.CookieUtils;

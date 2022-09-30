@@ -1,11 +1,18 @@
 package com.frombooktobook.frombooktobookbackend.service;
 
+import com.frombooktobook.frombooktobookbackend.controller.user.PasswordChangeRequestDto;
+import com.frombooktobook.frombooktobookbackend.domain.comment.CommentRepository;
+import com.frombooktobook.frombooktobookbackend.domain.liked.LikedRepository;
+import com.frombooktobook.frombooktobookbackend.domain.post.PostRepository;
 import com.frombooktobook.frombooktobookbackend.domain.user.User;
 import com.frombooktobook.frombooktobookbackend.domain.user.UserRepository;
 import com.frombooktobook.frombooktobookbackend.exception.ResourceNotFoundException;
+import com.frombooktobook.frombooktobookbackend.exception.WrongPasswordException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import java.util.UUID;
 
 
 @Service
@@ -13,10 +20,20 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PostRepository postRepository;
+    private final LikedRepository likedRepository;
+    private final CommentRepository commentRepository;
+    private final PasswordEncoder passwordEncoder;
 
+    @Transactional
+    public void deleteUser(User user){
+        userRepository.deleteById(user.getId());
+        likedRepository.deleteByUser(user);
+        commentRepository.deleteByWriter(user);
+    }
 
     public User findByEmail(String email) {
-        User member = userRepository.findByEmail(email).orElse(null);
+        User member = userRepository.findByEmail(email).orElseThrow(()->new ResourceNotFoundException("User","email",email));
         return member;
     }
 
@@ -26,9 +43,33 @@ public class UserService {
     }
 
     @Transactional
-    public User updateMember(User member, String name, String imgUrl) {
-        member.update(name,imgUrl);
-        return userRepository.save(member);
+    public User updateUser(User user, String name, String imgUrl) {
+        user.update(name,imgUrl);
+        return userRepository.save(user);
+    }
+
+    @Transactional
+    public String changePasswordToTempPassword(User user) {
+        String tempPassword;
+        tempPassword = UUID.randomUUID().toString().substring(0,8);
+        user.setPassword(passwordEncoder.encode(tempPassword));
+        return tempPassword;
+    }
+
+    @Transactional
+    public void changePasswordToNewPassword(PasswordChangeRequestDto requestDto) {
+        User user = findByEmail(requestDto.getEmail());
+        if(checkIfPasswordIsCorrect(user,requestDto.getCurrentPassword())) {
+            user.setPassword(passwordEncoder.encode(requestDto.getNewPassword()));
+        } else {
+            throw new WrongPasswordException("password wrong.");
+        }
+    }
+
+    public boolean checkIfPasswordIsCorrect(User user, String password) {
+        String realPassword = user.getPassword();
+        System.out.println(realPassword+"::"+passwordEncoder.encode(password));
+        return passwordEncoder.matches(password,realPassword);
     }
 
 

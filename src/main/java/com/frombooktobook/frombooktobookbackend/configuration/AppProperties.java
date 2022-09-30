@@ -1,5 +1,6 @@
-package com.frombooktobook.frombooktobookbackend.config;
+package com.frombooktobook.frombooktobookbackend.configuration;
 
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.ArrayList;
@@ -19,8 +20,8 @@ public class AppProperties {
             return tokenSecret;
         }
 
-        public void setTokenSecret(String tokenSceret) {
-            this.tokenSecret = tokenSceret;
+        public void setTokenSecret(String tokenSecret) {
+            this.tokenSecret = tokenSecret;
         }
 
         public long getTokenExpirationMsec() {

@@ -1,4 +1,4 @@
-package com.frombooktobook.frombooktobookbackend.controller.post;
+package com.frombooktobook.frombooktobookbackend.controller.post.dto;
 
 import com.frombooktobook.frombooktobookbackend.domain.post.Post;
 import com.frombooktobook.frombooktobookbackend.domain.user.User;

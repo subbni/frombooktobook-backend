@@ -1,8 +1,9 @@
 package com.frombooktobook.frombooktobookbackend.controller.post;
 
+import com.frombooktobook.frombooktobookbackend.controller.post.dto.PostCreateRequestDto;
+import com.frombooktobook.frombooktobookbackend.controller.post.dto.PostResponseDto;
 import com.frombooktobook.frombooktobookbackend.domain.post.Post;
 import com.frombooktobook.frombooktobookbackend.domain.post.PostRepository;
-import com.frombooktobook.frombooktobookbackend.service.PostService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

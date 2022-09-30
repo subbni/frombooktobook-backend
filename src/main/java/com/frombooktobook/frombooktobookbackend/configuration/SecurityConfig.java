@@ -1,11 +1,10 @@
-package com.frombooktobook.frombooktobookbackend.config;
+package com.frombooktobook.frombooktobookbackend.configuration;
 
 import com.frombooktobook.frombooktobookbackend.security.jwt.JwtAccessDeniedHandler;
 import com.frombooktobook.frombooktobookbackend.security.jwt.JwtAuthenticationEntryPoint;
 import com.frombooktobook.frombooktobookbackend.security.jwt.TokenAuthenticationFilter;
 import com.frombooktobook.frombooktobookbackend.security.*;
 import com.frombooktobook.frombooktobookbackend.security.CustomUserDetailsService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +13,6 @@ import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -99,7 +97,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic()
                 .disable()
                 .exceptionHandling()
-                .authenticationEntryPoint(new RestAuthenticationEntryPoint())
                 .and()
                 .authorizeRequests()
                 .antMatchers("/",
@@ -114,14 +111,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.css",
                         "/**/*.js")
                 .permitAll()
-                .antMatchers("/auth/**","/oauth2/**")
+                .antMatchers("/auth/**","/oauth2/**","/mail/**")
+
                 .permitAll()
                 // 기본 게시물 둘러보기는 누구나 가능하도록
-                .antMatchers("/post")
+                .antMatchers("/post/paging")
                 .permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
+                // oauth2 로그인 설정
                 .oauth2Login()
                 .authorizationEndpoint()
                 .baseUri("/oauth2/authorize")
@@ -136,7 +135,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .successHandler(oAuth2AuthenticationSuccessHandler)
                 .failureHandler(oAuth2AuthenticationFailurehandler);
 
-        // custom Token based authentication filter 추가
+        // UsernamePasswordAuthenticationFilter 실행 전에 custom Token based authentication filter 추가
         http.addFilterBefore(tokenAuthenticationFilter(),UsernamePasswordAuthenticationFilter.class);
     }
 }

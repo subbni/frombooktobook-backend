@@ -1,6 +1,6 @@
 package com.frombooktobook.frombooktobookbackend.security.jwt;
 
-import com.frombooktobook.frombooktobookbackend.config.AppProperties;
+import com.frombooktobook.frombooktobookbackend.configuration.AppProperties;
 import com.frombooktobook.frombooktobookbackend.security.JwtUserDetails;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ public class TokenProvider {
     private static final Logger logger = LoggerFactory.getLogger(TokenProvider.class);
 
     private static long TOKEN_EXPIRE_MSEC = 864000000;
-    private static String TOKEN_SECRET_KEY = "lskdjfiawjfojals286k2345flkasdncvjknawoe3234ifjsfjalwejf";
+    private static String TOKEN_SECRET_KEY = "lsasldfj94jf93hg5phgjskfndklsjg2094ut2jkejf0u9skdjalwejf";
     private AppProperties appProperties;
 
     public TokenProvider (AppProperties appProperties) {

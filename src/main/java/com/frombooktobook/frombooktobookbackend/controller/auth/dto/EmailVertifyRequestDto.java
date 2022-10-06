@@ -25,4 +25,5 @@ public class EmailVertifyRequestDto {
         this.email=email;
         this.code= code;
     }
+
 }

@@ -2,16 +2,16 @@ package com.frombooktobook.frombooktobookbackend.domain.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.frombooktobook.frombooktobookbackend.domain.BaseTimeEntity;
-import com.frombooktobook.frombooktobookbackend.domain.liked.Liked;
-import com.frombooktobook.frombooktobookbackend.domain.post.Post;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import java.util.List;
 
+@DynamicInsert
 @Getter
 @NoArgsConstructor
 @Entity
@@ -41,7 +41,12 @@ public class User extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private ProviderType providerType;
 
-    // private String providerId;
+    @Column(name="mail_code")
+    private String mailCode;
+
+    @Column(name="mail_vertified")
+    @ColumnDefault("false")
+    private boolean mailVertified;
 
     @Builder
     public User(String email, String name, String password, String imgUrl, Role role, ProviderType providerType) {
@@ -68,6 +73,16 @@ public class User extends BaseTimeEntity {
         return this;
     }
 
+    public User setMailCode(String mailCode) {
+        this.mailCode = mailCode;
+        return this;
+    }
+
+    public User setMailVertified(boolean mailVertified) {
+        this.mailVertified = mailVertified;
+        return this;
+    }
+
     public User update(String name, String imgUrl) {
         this.name = name;
         this.imgUrl = imgUrl;
@@ -77,4 +92,9 @@ public class User extends BaseTimeEntity {
     public String getRoleKey() {
         return this.role.getKey();
     }
+
+    public boolean getMailVertified() {
+        return this.mailVertified;
+    }
+
 }

@@ -41,7 +41,6 @@ public class UserController {
     @PostMapping("/changePassword")
     public ApiResponseDto changePassword(@RequestBody PasswordChangeRequestDto requestDto) {
         try{
-            System.out.println(requestDto.getEmail());
             userService.changePasswordToNewPassword(requestDto);
             return new ApiResponseDto(true,"password successfully changed.");
         }catch(Exception e) {

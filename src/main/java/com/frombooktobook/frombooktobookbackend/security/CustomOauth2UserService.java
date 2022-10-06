@@ -4,6 +4,7 @@ import com.frombooktobook.frombooktobookbackend.domain.user.User;
 import com.frombooktobook.frombooktobookbackend.domain.user.UserRepository;
 import com.frombooktobook.frombooktobookbackend.domain.user.ProviderType;
 import com.frombooktobook.frombooktobookbackend.domain.user.Role;
+import com.frombooktobook.frombooktobookbackend.exception.OAuthProviderMissMatchException;
 import com.frombooktobook.frombooktobookbackend.security.userinfo.OAuth2UserInfo;
 import com.frombooktobook.frombooktobookbackend.security.userinfo.OAuth2UserInfoFactory;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.transaction.annotation.Transactional;
 
 /*
 Oauth2 공급자로부터 액세스 토큰을 얻은 후 실행될 클래스.
@@ -54,7 +56,7 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
         // 이미 회원가입 된 사용자라면
         if(savedUser!=null) {
             if(providerType != savedUser.getProviderType()) {
-                // OAuthProviderMissMatchException 만들어서 에러 띄우기
+                throw new OAuthProviderMissMatchException("이미 등록된 이메일 입니다.");
             }
             savedUser = updateUser(savedUser, userInfo);
         } else {
@@ -65,8 +67,9 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
     }
 
     // 회원가입 진행
+    @Transactional
     private User registerUser(OAuth2UserInfo userInfo, ProviderType providerType) {
-        return userRepository.save(
+        User user = userRepository.save(
                 User.builder()
                 .email(userInfo.getEmail())
                         .name(userInfo.getName())
@@ -74,14 +77,16 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
                 .imgUrl(userInfo.getImageUrl())
                 .providerType(providerType)
                 .build());
+        return user.setMailVertified(true);
+
     }
 
     // 업데이트
+    @Transactional
     private User updateUser(User user, OAuth2UserInfo userInfo) {
         if(userInfo.getName()!=null && !user.getName().equals(userInfo.getName())) {
             user.setName(userInfo.getName());
         }
-
 
         if(userInfo.getImageUrl()!=null && !user.getImgUrl().equals(userInfo.getImageUrl())) {
             user.setImgUrl(userInfo.getImageUrl());

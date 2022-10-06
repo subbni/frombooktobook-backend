@@ -19,11 +19,6 @@ public class MailService {
     @Autowired
     private JavaMailSender javaMailSender;
 
-    public void sendTempPasswordEmail(String email,String tempPassword) throws Exception{
-            MimeMessage mimeMessage = createTempPasswordMessage(email,tempPassword);
-            sendMail(email,mimeMessage);
-    }
-
 
     public void sendMail(String email, MimeMessage message) throws Exception{
         try{
@@ -34,15 +29,9 @@ public class MailService {
         }
     }
 
-    private MimeMessage createMessage(String email) throws Exception{
-        MimeMessage message = javaMailSender.createMimeMessage();
-
-        message.addRecipients(Message.RecipientType.TO,email);
-        message.setSubject("FromBookToBook 이메일 인증 테스트 번호입니다.");
-        message.setText("테스트 코드 : "+makeRandomNumber());
-
-        message.setFrom("suddni@naver.com");
-        return message;
+    public void sendTempPasswordEmail(String email,String tempPassword) throws Exception{
+            MimeMessage mimeMessage = createTempPasswordMessage(email,tempPassword);
+            sendMail(email,mimeMessage);
     }
 
     private MimeMessage createTempPasswordMessage(String email,String tempPassword) throws Exception{
@@ -50,10 +39,48 @@ public class MailService {
 
         message.addRecipients(Message.RecipientType.TO,email);
         message.setSubject("FromBookToBook 요청하신 임시 비밀번호입니다.");
-        message.setText("임시비밀번호 : "+tempPassword);
-
+        message.setText(createTempPasswordText(tempPassword),"utf-8","html");
         message.setFrom("suddni@naver.com");
         return message;
+    }
+
+    private String createTempPasswordText(String tempPassword) {
+        String text = "";
+        text += "FrombookToBook에서 요청하신 임시 비밀번호를 보내드립니다.";
+        text += "<br>";
+        text += "임시 비밀번호 : <strong>";
+        text += tempPassword;
+        text += "</strong>";
+        text += "<br>";
+        text += "로그인 하신 뒤, 빠르게 비밀번호를 변경해주시기 바랍니다.";
+
+        return text;
+    }
+
+    public void sendVertifyEmail(String email, String code) throws Exception {
+        MimeMessage mimeMessage = createEmailVertifyMessage(email,code);
+        sendMail(email,mimeMessage);
+    }
+
+    private MimeMessage createEmailVertifyMessage(String email, String code) throws Exception{
+        MimeMessage message = javaMailSender.createMimeMessage();
+
+        message.addRecipients(Message.RecipientType.TO,email);
+        message.setSubject("FromBookToBook 이메일 인증 코드입니다.");
+        message.setText(createEmailVertifyText(code),"utf-8","html");
+        message.setFrom("suddni@naver.com");
+        return message;
+    }
+
+    private String createEmailVertifyText(String code) {
+        String text = "";
+        text += "아래 코드를 FromBookToBook 이메일 인증 코드란에 입력해주세요.";
+        text += "<br>";
+        text += "CODE : <strong>";
+        text += code;
+        text += "</strong>";
+
+        return text;
     }
 
     private int makeRandomNumber() {

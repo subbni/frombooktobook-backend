@@ -1,9 +1,6 @@
 package com.frombooktobook.frombooktobookbackend.controller.auth;
 
-import com.frombooktobook.frombooktobookbackend.controller.auth.dto.ApiResponseDto;
-import com.frombooktobook.frombooktobookbackend.controller.auth.dto.AuthResponseDto;
-import com.frombooktobook.frombooktobookbackend.controller.auth.dto.LoginRequestDto;
-import com.frombooktobook.frombooktobookbackend.controller.auth.dto.RegisterRequestDto;
+import com.frombooktobook.frombooktobookbackend.controller.auth.dto.*;
 import com.frombooktobook.frombooktobookbackend.domain.user.ProviderType;
 import com.frombooktobook.frombooktobookbackend.domain.user.Role;
 import com.frombooktobook.frombooktobookbackend.domain.user.User;
@@ -16,6 +13,7 @@ import com.frombooktobook.frombooktobookbackend.security.jwt.TokenProvider;
 import com.frombooktobook.frombooktobookbackend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -94,6 +92,33 @@ public class AuthController {
             return new ApiResponseDto(false, "존재하지 않은 이메일입니다.");
         } catch(Exception e) {
             return new ApiResponseDto(false, "mail exception occured.");
+        }
+    }
+
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("/vertify/{email}")
+    public ApiResponseDto sendEmailVertifyCode(@PathVariable String email) {
+        if(userService.checkIfVertified(email)) {
+            return new ApiResponseDto(false,"이미 인증된 이메일입니다.");
+        }
+
+        try{
+            String code = userService.setMailCode(email);
+            mailService.sendVertifyEmail(email,code);
+            return new ApiResponseDto(true,"이메일 인증 코드가 메일로 전송되었습니다.");
+        } catch(Exception e) {
+            return new ApiResponseDto(false,e.getMessage());
+        }
+    }
+
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @PostMapping("/vertify/email")
+    public ApiResponseDto vertifyEmailCode(@RequestBody EmailVertifyRequestDto  requestDto) {
+        try {
+            userService.vertifyMailCode(requestDto);
+            return new ApiResponseDto(true,"이메일 인증이 완료되었습니다.");
+        } catch(Exception e) {
+            return new ApiResponseDto(false,e.getMessage());
         }
     }
 }

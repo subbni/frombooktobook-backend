@@ -68,7 +68,7 @@ public class MailService {
         message.addRecipients(Message.RecipientType.TO,email);
         message.setSubject("FromBookToBook 이메일 인증 코드입니다.");
         message.setText(createEmailVertifyText(code),"utf-8","html");
-        message.setFrom("suddni@naver.com");
+        message.setFrom(new InternetAddress("suddni@naver.com","FromBookToBook"));
         return message;
     }
 

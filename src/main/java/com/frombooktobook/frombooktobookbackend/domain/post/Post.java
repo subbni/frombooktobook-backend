@@ -1,15 +1,13 @@
 package com.frombooktobook.frombooktobookbackend.domain.post;
 
 import com.frombooktobook.frombooktobookbackend.domain.BaseTimeEntity;
-import com.frombooktobook.frombooktobookbackend.domain.liked.Liked;
+import com.frombooktobook.frombooktobookbackend.domain.Book;
 import com.frombooktobook.frombooktobookbackend.domain.user.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -25,39 +23,32 @@ public class Post extends BaseTimeEntity {
     @JoinColumn(name = "USER_ID")
     private User writer;
 
-    @Column(nullable = false)
-    private String bookName;
-
     private String title;
-
-    private String bookAuthor;
-
-    private int rate;
 
     private String content;
 
     private int likedCount;
 
-    private int views;
+    private int hit;
+
+    @OneToOne
+    @JoinColumn(name="BOOK_ID")
+    private Book book;
 
     @Builder
-    public Post(User writer, String bookName, String bookAuthor, int rate, String content, String title) {
+    public Post(User writer, String title, String content, Book book) {
         this.writer = writer;
-        this.bookName = bookName;
-        this.bookAuthor = bookAuthor;
-        this.rate=rate;
-        this.content = content;
         this.title = title;
+        this.content = content;
+        this.book = book;
         this.likedCount=0;
-        this.views=0;
+        this.hit=0;
     }
 
-    public void update(String bookName, String bookAuthor, String title, String content, int rate) {
-        this.bookName = bookName;
-        this.bookAuthor = bookAuthor;
+    public void update(String title, String content, Book book) {
         this.title = title;
         this.content = content;
-        this.rate=rate;
+        this.book.update(book.getTitle(),book.getAuthor(),book.getRate());
     }
 
     public int addLikedCount() {
@@ -70,9 +61,9 @@ public class Post extends BaseTimeEntity {
         return likedCount;
     }
 
-    public int updateView(int count) {
-        views += count;
-        return views;
+    public int addHit() {
+        this.hit++;
+        return hit;
     }
 }
 

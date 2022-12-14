@@ -48,4 +48,11 @@ public class UserController {
         }
     }
 
+
+    @PreAuthorize("hasRole('AUTHENTICATED')")
+    @GetMapping("/test")
+    public ApiResponseDto testMethod() {
+        return new ApiResponseDto(true,"성공!");
+    }
+
 }

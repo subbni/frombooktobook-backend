@@ -1,6 +1,6 @@
 package com.frombooktobook.frombooktobookbackend.controller.liked;
 
-import com.frombooktobook.frombooktobookbackend.controller.post.dto.PostListResponseDto;
+import com.frombooktobook.frombooktobookbackend.controller.post.dto.PostResponseDto;
 import com.frombooktobook.frombooktobookbackend.service.LikedService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,7 +33,7 @@ public class LikedController {
 
     //2. 좋아요 누른 독후감 리스트 조회
     @GetMapping("/{email}")
-    public List<PostListResponseDto> likedPostList(@PathVariable String email) {
+    public List<PostResponseDto> likedPostList(@PathVariable String email) {
         return likedService.getLikedPostByUser(email);
     }
 

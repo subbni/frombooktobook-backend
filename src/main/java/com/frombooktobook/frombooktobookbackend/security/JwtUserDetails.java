@@ -1,7 +1,7 @@
 package com.frombooktobook.frombooktobookbackend.security;
 
+import com.frombooktobook.frombooktobookbackend.domain.user.Role;
 import com.frombooktobook.frombooktobookbackend.domain.user.User;
-import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -37,8 +37,21 @@ public class JwtUserDetails implements UserDetails, OAuth2User {
         );
     }
 
+    public static JwtUserDetails create(User user, String roleKey) {
+        List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(roleKey));
+        System.out.println("야호~~~~~~~~~~~~~~~~~~"+authorities);
+        return new JwtUserDetails(
+                user.getId(),
+                user.getEmail(),
+                user.getPassword(),
+                authorities
+        );
+
+    }
+
+
     public static JwtUserDetails create(User user, Map<String,Object> attributes) {
-        JwtUserDetails jwtUserDetails = JwtUserDetails.create(user);
+        JwtUserDetails jwtUserDetails = JwtUserDetails.create(user, user.getRoleKey());
         jwtUserDetails.setAttributes(attributes);
         return jwtUserDetails;
     }

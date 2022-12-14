@@ -1,8 +1,9 @@
 package com.frombooktobook.frombooktobookbackend.service;
 
-import com.frombooktobook.frombooktobookbackend.controller.post.dto.PostListResponseDto;
+import com.frombooktobook.frombooktobookbackend.controller.post.dto.PostCreateRequestDto;
 import com.frombooktobook.frombooktobookbackend.controller.post.dto.PostResponseDto;
 import com.frombooktobook.frombooktobookbackend.controller.post.dto.PostUpdateRequestDto;
+import com.frombooktobook.frombooktobookbackend.domain.Book;
 import com.frombooktobook.frombooktobookbackend.domain.comment.CommentRepository;
 import com.frombooktobook.frombooktobookbackend.domain.liked.LikedRepository;
 import com.frombooktobook.frombooktobookbackend.domain.post.Post;
@@ -27,7 +28,10 @@ public class PostService {
     private final CommentRepository commentRepository;
 
     @Transactional
-    public Post savePost(Post post) {
+    public Post savePost(PostCreateRequestDto requestDto) {
+        User user = userRepository.findByEmail(requestDto.getUserEmail())
+                        .orElseThrow(()->new ResourceNotFoundException("User","email",requestDto.getUserEmail()));
+        Post post = requestDto.toEntity(user);
          postRepository.save(post);
          return post;
     }
@@ -47,73 +51,56 @@ public class PostService {
     public void  updatePost(PostUpdateRequestDto requestDto) {
         Post post = postRepository.findById(requestDto.getPostId())
                 .orElseThrow(()->new ResourceNotFoundException("Post","id",requestDto.getPostId()));
-        post.update(requestDto.getBookName(), requestDto.getBookAuthor(), requestDto.getTitle(),
-                requestDto.getContent(), requestDto.getRate());
+        Book book = new Book(requestDto.getBookTitle(), requestDto.getBookAuthor(), requestDto.getBookRate());
+        post.update(requestDto.getTitle(), requestDto.getContent(), book);
     }
 
-    // post id로 post 조회
-    public PostResponseDto findPostById(Long postId) {
+
+    public Post findPostById(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(()->
                 new IllegalArgumentException("해당 게시글이 없습니다. id=" +postId));
-
-        updatePostViews(postId);
-        return new PostResponseDto(post);
+        return post;
     }
 
     @Transactional
-    public PostResponseDto findPostByIdAndSetIsWriter(Long postId, Long userId ) {
-        Post post = updatePostViews(postId);
-        PostResponseDto responseDto = new PostResponseDto(post);
-        responseDto.setIsWriter(checkIsWriter(userId,postId));
-        return responseDto;
+    public Post updatePostHit(Post post) {
+        post.addHit();
+        return post;
     }
 
-    public boolean checkIsWriter(Long userId, Long postId) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(()->new ResourceNotFoundException("Post","id",postId));
-        //    System.out.println(post.getWriter().getId() +" : "+userId);
+
+    public boolean checkIsWriter(Post post, Long userId) {
         return post.getWriter().getId()==userId? true:false;
-    }
-
-    // 전체 조회 (내림차순)
-    public List<PostListResponseDto> findAllPostByDesc() {
-        return postRepository.findAll(Sort.by(Sort.Direction.DESC,"id")).stream()
-                .map(PostListResponseDto::new)
-                .collect(Collectors.toList());
     }
 
 
     // 전체 조회 페이지네이션
-    public Page<PostListResponseDto> getAllPostPage(Pageable pageable) {
+    public Page<PostResponseDto> getAllPostPage(Pageable pageable) {
         Page<Post> page = postRepository.findAll(pageable);
-        return new PageImpl<PostListResponseDto>(postToDto(page.getContent()),
+        return new PageImpl<PostResponseDto>(postToDto(page.getContent()),
                 pageable, page.getTotalElements());
     }
 
     // 사용자 작성 포스트 조회
-    public List<PostListResponseDto> findPostListByUser(User user) {
+    public List<PostResponseDto> findPostListByUser(User user) {
         return postRepository.findByWriter(user).stream()
-                .map(PostListResponseDto::new)
+                .map(PostResponseDto::new)
                 .collect(Collectors.toList());
     }
 
     // 사용자 작성 포스트 조회 페이지네이션
-    public Page<PostListResponseDto> getPostListPageByUser(User user, Pageable pageable) {
+    public Page<PostResponseDto> getPostListPageByUser(String userEmail, Pageable pageable) {
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(()->new ResourceNotFoundException("User","email",userEmail));
         Page<Post> page = postRepository.findByWriter(user,pageable);
-        return new PageImpl<PostListResponseDto>(postToDto(page.getContent()),
+        return new PageImpl<PostResponseDto>(postToDto(page.getContent()),
                 pageable, page.getTotalElements());
     }
 
-    public  List<PostListResponseDto> postToDto(List<Post> postList) {
-        return postList.stream().map(PostListResponseDto::new)
+    public  List<PostResponseDto> postToDto(List<Post> postList) {
+        return postList.stream().map(PostResponseDto::new)
                 .collect(Collectors.toList());
     }
 
-    @Transactional
-    public Post updatePostViews(long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(() ->
-                new IllegalArgumentException("해당 게시글이 없습니다. id=" + postId));
-        post.updateView(1);
-        return post;
-    }
+
 }

@@ -95,13 +95,13 @@ public class UserService {
 
     @Transactional
     public void setMailVertified(User user, boolean vertified) {
-        user.setMailVertified(vertified);
+        user.setMailVerified(vertified);
         user.setRole(Role.AUTHENTICATED);
     }
 
     public boolean checkIfVertified(String email) {
         User user = findByEmail(email);
-        if(user.getMailVertified()) {
+        if(user.getMailVerified()) {
             return true;
         } else {
             return false;

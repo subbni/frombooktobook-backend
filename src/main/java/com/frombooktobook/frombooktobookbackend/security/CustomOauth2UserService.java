@@ -77,7 +77,10 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
                 .imgUrl(userInfo.getImageUrl())
                 .providerType(providerType)
                 .build());
-        return user.setMailVertified(true);
+        user.setMailVerified(true);
+        System.out.println("*******회원가입 실행**********");
+        System.out.println(user.getMailVerified());
+        return user;
 
     }
 
@@ -92,6 +95,7 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
             user.setImgUrl(userInfo.getImageUrl());
         }
 
+        System.out.println("*******업데이트 실행**********");
         return user;
     }
 }

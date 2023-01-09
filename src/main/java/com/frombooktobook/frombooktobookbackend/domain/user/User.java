@@ -5,7 +5,6 @@ import com.frombooktobook.frombooktobookbackend.domain.BaseTimeEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
@@ -44,9 +43,8 @@ public class User extends BaseTimeEntity {
     @Column(name="mail_code")
     private String mailCode;
 
-    @Column(name="mail_vertified")
-    @ColumnDefault("false")
-    private boolean mailVertified;
+    @Column(name="mail_verified")
+    private boolean mailVerified;
 
     @Builder
     public User(String email, String name, String password, String imgUrl, Role role, ProviderType providerType) {
@@ -78,8 +76,8 @@ public class User extends BaseTimeEntity {
         return this;
     }
 
-    public User setMailVertified(boolean mailVertified) {
-        this.mailVertified = mailVertified;
+    public User setMailVerified(boolean mailVerified) {
+        this.mailVerified = mailVerified;
         return this;
     }
 
@@ -98,8 +96,8 @@ public class User extends BaseTimeEntity {
         return this.role.getKey();
     }
 
-    public boolean getMailVertified() {
-        return this.mailVertified;
+    public boolean getMailVerified() {
+        return this.mailVerified;
     }
 
 }

@@ -21,7 +21,7 @@ public class CommentResponseDto {
     public CommentResponseDto(Comment comment) {
         this.id = comment.getId();
         this.email = comment.getWriter().getEmail();
-        this.localDateTime = comment.getModifiedDate();
+        this.localDateTime = comment.getCreatedTime();
         this.content = comment.getContent();
         this.isWriter = false;
     }

@@ -1,7 +1,7 @@
 package com.frombooktobook.frombooktobookbackend.service;
 
 import com.frombooktobook.frombooktobookbackend.controller.liked.LikedRequestDto;
-import com.frombooktobook.frombooktobookbackend.controller.post.dto.PostListResponseDto;
+import com.frombooktobook.frombooktobookbackend.controller.post.dto.PostResponseDto;
 import com.frombooktobook.frombooktobookbackend.domain.liked.Liked;
 import com.frombooktobook.frombooktobookbackend.domain.liked.LikedRepository;
 import com.frombooktobook.frombooktobookbackend.domain.post.Post;
@@ -51,13 +51,13 @@ public class LikedService {
 
     }
 
-    public List<PostListResponseDto> getLikedPostByUser(String email) {
+    public List<PostResponseDto> getLikedPostByUser(String email) {
         User user = userRepository.findByEmail(email).orElse(null);
 
         List<Liked> likedList = likedRepository.findByUser(user);
 
         return likedList.stream().map(Liked::getPost)
-                .map(PostListResponseDto::new)
+                .map(PostResponseDto::new)
                 .collect(Collectors.toList());
     }
 

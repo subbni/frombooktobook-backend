@@ -1,9 +1,12 @@
 package com.frombooktobook.frombooktobookbackend.controller.post.dto;
 
+import com.frombooktobook.frombooktobookbackend.domain.Book;
 import com.frombooktobook.frombooktobookbackend.domain.post.Post;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -12,11 +15,10 @@ public class PostResponseDto {
 
     private Long id;
     private String writerName;
-    private String bookName;
-    private String bookAuthor;
     private String title;
     private String content;
-    private int rate;
+    private Book book;
+    private LocalDateTime createdDate;
     private boolean isWriter;
     private int likedCount;
     private int views;
@@ -24,18 +26,25 @@ public class PostResponseDto {
     public PostResponseDto(Post post) {
         this.id=post.getId();
         this.writerName = post.getWriter().getName();
-        this.bookName=post.getBookName();
-        this.bookAuthor=post.getBookAuthor();
         this.title=post.getTitle();
         this.content=post.getContent();
-        this.rate=post.getRate();
+        this.book = post.getBook();
+        this.createdDate = post.getCreatedTime();
         this.isWriter = false;
         this.likedCount = post.getLikedCount();
-        this.views = post.getViews();
+        this.views = post.getHit();
     }
 
-    public void setIsWriter(boolean isWriter) {
-        this.isWriter=isWriter;
+    public PostResponseDto(Post post, boolean isWriter) {
+        this.id=post.getId();
+        this.writerName = post.getWriter().getName();
+        this.title=post.getTitle();
+        this.content=post.getContent();
+        this.book = post.getBook();
+        this.createdDate = post.getCreatedTime();
+        this.isWriter = isWriter;
+        this.likedCount = post.getLikedCount();
+        this.views = post.getHit();
     }
 
 }

@@ -4,6 +4,7 @@ import com.frombooktobook.frombooktobookbackend.controller.auth.dto.EmailVertify
 import com.frombooktobook.frombooktobookbackend.controller.user.PasswordChangeRequestDto;
 import com.frombooktobook.frombooktobookbackend.domain.comment.CommentRepository;
 import com.frombooktobook.frombooktobookbackend.domain.liked.LikedRepository;
+import com.frombooktobook.frombooktobookbackend.domain.user.Role;
 import com.frombooktobook.frombooktobookbackend.domain.user.User;
 import com.frombooktobook.frombooktobookbackend.domain.user.UserRepository;
 import com.frombooktobook.frombooktobookbackend.exception.EmailVerifyCodeNotMatchException;
@@ -95,6 +96,7 @@ public class UserService {
     @Transactional
     public void setMailVertified(User user, boolean vertified) {
         user.setMailVertified(vertified);
+        user.setRole(Role.AUTHENTICATED);
     }
 
     public boolean checkIfVertified(String email) {

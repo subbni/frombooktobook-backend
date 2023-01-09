@@ -33,7 +33,6 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-       // System.out.println("attributes"+ super.loadUser(userRequest).getAttributes());
         OAuth2User user = super.loadUser(userRequest);
 
         try{
@@ -53,12 +52,13 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
 
         User savedUser = userRepository.findByEmail(userInfo.getEmail()).orElse(null);
 
-        // 이미 회원가입 된 사용자라면
+        // 이미 회원가입 된 이메일
         if(savedUser!=null) {
             if(providerType != savedUser.getProviderType()) {
-                throw new OAuthProviderMissMatchException("이미 등록된 이메일 입니다.");
+                throw new OAuthProviderMissMatchException("해당 이메일로 가입 된 계정이 이미 존재합니다.");
             }
             savedUser = updateUser(savedUser, userInfo);
+
         } else {
             // 회원가입 되어 있지 않은 사용자
             savedUser = registerUser(userInfo, providerType);
@@ -73,11 +73,14 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
                 User.builder()
                 .email(userInfo.getEmail())
                         .name(userInfo.getName())
-                .role(Role.USER)
+                .role(Role.AUTHENTICATED)
                 .imgUrl(userInfo.getImageUrl())
                 .providerType(providerType)
                 .build());
-        return user.setMailVertified(true);
+        user.setMailVerified(true);
+        System.out.println("*******회원가입 실행**********");
+        System.out.println(user.getMailVerified());
+        return user;
 
     }
 
@@ -92,6 +95,7 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
             user.setImgUrl(userInfo.getImageUrl());
         }
 
+        System.out.println("*******업데이트 실행**********");
         return user;
     }
 }

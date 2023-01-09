@@ -29,10 +29,10 @@ public class UserController {
 
     @GetMapping("/{email}")
     public ApiResponseDto checkIfExistEmail(@PathVariable String email) {
-        try{
+        try {
             User user = userService.findByEmail(email);
-            return new ApiResponseDto(true,"email exists.");
-        } catch(ResourceNotFoundException e) {
+            return new ApiResponseDto(true, "email exists.");
+        } catch (ResourceNotFoundException e) {
             return new ApiResponseDto(false, "email not exists.");
         }
     }
@@ -40,12 +40,11 @@ public class UserController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/changePassword")
     public ApiResponseDto changePassword(@RequestBody PasswordChangeRequestDto requestDto) {
-        try{
+        try {
             userService.changePasswordToNewPassword(requestDto);
-            return new ApiResponseDto(true,"password successfully changed.");
-        }catch(Exception e) {
-            return new ApiResponseDto(false,e.getMessage());
+            return new ApiResponseDto(true, "password successfully changed.");
+        } catch (Exception e) {
+            return new ApiResponseDto(false, e.getMessage());
         }
     }
-
 }

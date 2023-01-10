@@ -1,6 +1,6 @@
 package com.frombooktobook.frombooktobookbackend.service;
 
-import com.frombooktobook.frombooktobookbackend.controller.liked.LikedRequestDto;
+import com.frombooktobook.frombooktobookbackend.controller.liked.dto.LikedRequestDto;
 import com.frombooktobook.frombooktobookbackend.controller.post.dto.PostResponseDto;
 import com.frombooktobook.frombooktobookbackend.domain.liked.Liked;
 import com.frombooktobook.frombooktobookbackend.domain.liked.LikedRepository;

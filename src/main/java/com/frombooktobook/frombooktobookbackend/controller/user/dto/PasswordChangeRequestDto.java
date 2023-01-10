@@ -1,4 +1,4 @@
-package com.frombooktobook.frombooktobookbackend.controller.user;
+package com.frombooktobook.frombooktobookbackend.controller.user.dto;
 
 import lombok.Builder;
 import lombok.Getter;

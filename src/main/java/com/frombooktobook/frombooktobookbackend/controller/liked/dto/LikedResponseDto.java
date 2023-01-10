@@ -1,4 +1,4 @@
-package com.frombooktobook.frombooktobookbackend.controller.liked;
+package com.frombooktobook.frombooktobookbackend.controller.liked.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

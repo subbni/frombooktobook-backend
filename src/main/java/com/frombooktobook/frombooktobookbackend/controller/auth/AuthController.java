@@ -1,85 +1,46 @@
 package com.frombooktobook.frombooktobookbackend.controller.auth;
 
 import com.frombooktobook.frombooktobookbackend.controller.auth.dto.*;
-import com.frombooktobook.frombooktobookbackend.controller.user.PasswordChangeRequestDto;
-import com.frombooktobook.frombooktobookbackend.domain.user.ProviderType;
-import com.frombooktobook.frombooktobookbackend.domain.user.Role;
+import com.frombooktobook.frombooktobookbackend.controller.user.dto.PasswordChangeRequestDto;
 import com.frombooktobook.frombooktobookbackend.domain.user.User;
-import com.frombooktobook.frombooktobookbackend.domain.user.UserRepository;
 import com.frombooktobook.frombooktobookbackend.exception.BadRequestException;
 import com.frombooktobook.frombooktobookbackend.exception.ResourceNotFoundException;
 import com.frombooktobook.frombooktobookbackend.exception.WrongPasswordException;
 import com.frombooktobook.frombooktobookbackend.mail.MailService;
-import com.frombooktobook.frombooktobookbackend.security.jwt.TokenProvider;
+import com.frombooktobook.frombooktobookbackend.service.AuthService;
 import com.frombooktobook.frombooktobookbackend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RequestMapping("/auth")
 @RestController
 public class AuthController {
-
-    private final AuthenticationManager authenticationManager;
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final TokenProvider tokenProvider;
+    private final AuthService authService;
     private final UserService userService;
     private final MailService mailService;
 
     // form 로그인
     @PostMapping("/login")
-    public ResponseEntity<AuthResponseDto> authenticateUser(@RequestBody LoginRequestDto loginRequest) {
-
-        User user;
-        if(!userRepository.existsByEmail(loginRequest.getEmail())){
-            throw new BadRequestException("존재하지 않는 이메일 계정입니다.");
-        } else {
-            user = userService.findByEmail(loginRequest.getEmail());
-            if(!userService.checkIfPasswordIsCorrect(user,loginRequest.getPassword())){
-                throw new WrongPasswordException("잘못된 password입니다.");
-            }
+    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequestDto loginRequest) {
+        try{
+            return ResponseEntity.ok(authService.login(loginRequest));
+        }catch(WrongPasswordException | BadRequestException e) {
+            return ResponseEntity.ok(new ApiResponseDto(false,e.getMessage())); // TODO: 수정 필요
         }
-
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequest.getEmail(),
-                        loginRequest.getPassword()
-                )
-        );
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        String token = tokenProvider.createToken(authentication);
-        return ResponseEntity.ok(new AuthResponseDto(token,user.getName(),user.getEmail()));
     }
 
     // form 회원가입
     @PostMapping("/sign-up")
-    public ResponseEntity<?> registerUser(@RequestBody RegisterRequestDto requestDto) {
-        if(userRepository.existsByEmail(requestDto.getEmail())) {
-            throw new BadRequestException("이미 가입된 이메일입니다.");
+    public ResponseEntity<?> registerUser(@RequestBody SignUpRequestDto requestDto) {
+        try{
+            authService.singUp(requestDto);
+            return ResponseEntity.ok(new ApiResponseDto(true, "User registered successfully ! "));
+        } catch(Exception e) {
+            return ResponseEntity.ok(new ApiResponseDto(false,e.getMessage()));
         }
-
-        User user = userRepository.save(
-                User.builder()
-                .email(requestDto.getEmail())
-                .name(requestDto.getName())
-                .password(passwordEncoder.encode(requestDto.getPassword()))
-                .providerType(ProviderType.LOCAL)
-                .role(Role.USER)
-                .build());
-
-
-        return ResponseEntity.ok(new ApiResponseDto(true, "User registered successfully ! "));
-
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")

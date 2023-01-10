@@ -22,7 +22,7 @@ public class LikedController {
     //1. 좋아요 버튼 눌렀을 때
     @PostMapping("/push")
     public LikedResponseDto pushLiked(@RequestBody LikedRequestDto requestDto) {
-        if(likedService.IsLikedExist(requestDto)==true) {
+        if(likedService.IsLikedExist(requestDto)) {
             likedService.deleteLiked(requestDto);
             return new LikedResponseDto(false,UNLIKED_MESSAGE);
         }
@@ -38,7 +38,7 @@ public class LikedController {
     }
 
     //3. 좋아요 버튼 눌렀는지 확인
-    @PostMapping("/isPushed")
+    @PostMapping("/pushed-or-not")
     public LikedResponseDto isPushed(@RequestBody LikedRequestDto requestDto) {
 
         if(likedService.IsLikedExist(requestDto)==true) {

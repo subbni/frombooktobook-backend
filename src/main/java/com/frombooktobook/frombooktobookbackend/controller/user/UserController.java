@@ -27,24 +27,13 @@ public class UserController {
 
     }
 
-    @GetMapping("/{email}")
+    @GetMapping("/existed-or-not")
     public ApiResponseDto checkIfExistEmail(@PathVariable String email) {
         try {
             User user = userService.findByEmail(email);
             return new ApiResponseDto(true, "email exists.");
         } catch (ResourceNotFoundException e) {
             return new ApiResponseDto(false, "email not exists.");
-        }
-    }
-
-    @PreAuthorize("hasRole('ROLE_USER')")
-    @PostMapping("/changePassword")
-    public ApiResponseDto changePassword(@RequestBody PasswordChangeRequestDto requestDto) {
-        try {
-            userService.changePasswordToNewPassword(requestDto);
-            return new ApiResponseDto(true, "password successfully changed.");
-        } catch (Exception e) {
-            return new ApiResponseDto(false, e.getMessage());
         }
     }
 }

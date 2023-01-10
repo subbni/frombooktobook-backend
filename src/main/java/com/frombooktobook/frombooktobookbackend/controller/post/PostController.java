@@ -37,14 +37,14 @@ public class PostController {
         }
     }
 
-    @GetMapping("/show/{id}")
+    @GetMapping("/{id}")
     public PostResponseDto showPost(@PathVariable("id") Long postId, @CurrentUser JwtUserDetails userDetails) {
         Post post = postService.findPostById(postId);
         postService.updatePostHit(post);
         return new PostResponseDto(post,postService.checkIsWriter(post,userDetails.getId()));
     }
 
-    @GetMapping("/show/page")
+    @GetMapping
     public Page<PostResponseDto> showPostListPage(Pageable pageable) {
         return postService.getAllPostPage(pageable);
     }

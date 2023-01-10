@@ -1,6 +1,7 @@
 package com.frombooktobook.frombooktobookbackend.controller.auth;
 
 import com.frombooktobook.frombooktobookbackend.controller.auth.dto.*;
+import com.frombooktobook.frombooktobookbackend.controller.user.PasswordChangeRequestDto;
 import com.frombooktobook.frombooktobookbackend.domain.user.ProviderType;
 import com.frombooktobook.frombooktobookbackend.domain.user.Role;
 import com.frombooktobook.frombooktobookbackend.domain.user.User;
@@ -61,7 +62,7 @@ public class AuthController {
     }
 
     // form 회원가입
-    @PostMapping("/register")
+    @PostMapping("/sign-up")
     public ResponseEntity<?> registerUser(@RequestBody RegisterRequestDto requestDto) {
         if(userRepository.existsByEmail(requestDto.getEmail())) {
             throw new BadRequestException("이미 가입된 이메일입니다.");
@@ -81,22 +82,8 @@ public class AuthController {
 
     }
 
-    @GetMapping("/tempPassword/{email}")
-    public ApiResponseDto issueTemporaryPassword(@PathVariable String email) {
-        try{
-            User user = userService.findByEmail(email);
-            String tempPassword = userService.changePasswordToTempPassword(user);
-            mailService.sendTempPasswordEmail(user.getEmail(),tempPassword);
-            return new ApiResponseDto(true, "임시 비밀번호가 메일로 전송되었습니다.");
-        } catch(ResourceNotFoundException e) {
-            return new ApiResponseDto(false, "존재하지 않은 이메일입니다.");
-        } catch(Exception e) {
-            return new ApiResponseDto(false, "mail exception occured.");
-        }
-    }
-
     @PreAuthorize("hasRole('ROLE_USER')")
-    @GetMapping("/vertify/{email}")
+    @GetMapping("/email-verify/{email}")
     public ApiResponseDto sendEmailVertifyCode(@PathVariable String email) {
         if(userService.checkIfVertified(email)) {
             return new ApiResponseDto(false,"이미 인증된 이메일입니다.");
@@ -112,13 +99,38 @@ public class AuthController {
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
-    @PostMapping("/vertify/email")
+    @PostMapping("/email-verify")
     public ApiResponseDto vertifyEmailCode(@RequestBody EmailVertifyRequestDto  requestDto) {
         try {
             userService.vertifyMailCode(requestDto);
             return new ApiResponseDto(true,"이메일 인증이 완료되었습니다.");
         } catch(Exception e) {
             return new ApiResponseDto(false,e.getMessage());
+        }
+    }
+
+    @GetMapping("/password/temporary")
+    public ApiResponseDto issueTemporaryPassword(@PathVariable String email) {
+        try{
+            User user = userService.findByEmail(email);
+            String tempPassword = userService.changePasswordToTempPassword(user);
+            mailService.sendTempPasswordEmail(user.getEmail(),tempPassword);
+            return new ApiResponseDto(true, "임시 비밀번호가 메일로 전송되었습니다.");
+        } catch(ResourceNotFoundException e) {
+            return new ApiResponseDto(false, "존재하지 않은 이메일입니다.");
+        } catch(Exception e) {
+            return new ApiResponseDto(false, "mail exception occured.");
+        }
+    }
+
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @PostMapping("/password/change")
+    public ApiResponseDto changePassword(@RequestBody PasswordChangeRequestDto requestDto) {
+        try {
+            userService.changePasswordToNewPassword(requestDto);
+            return new ApiResponseDto(true, "password successfully changed.");
+        } catch (Exception e) {
+            return new ApiResponseDto(false, e.getMessage());
         }
     }
 }

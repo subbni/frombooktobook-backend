@@ -25,7 +25,7 @@ public class CommentController {
 
     private final CommentService commentService;
 
-    @PostMapping("/write")
+    @PostMapping("/create")
     public CommentResponseDto createComment(
             @RequestBody CommentCreateRequestDto requestDto
             ) {
@@ -58,6 +58,5 @@ public class CommentController {
     public Page<CommentResponseDto> showCommentListPage(@CurrentUser JwtUserDetails userDetails, @RequestParam("id") Long postId, Pageable pageable) {
         return commentService.getCommentListPage(pageable,postId,userDetails.getId());
     }
-
 
 }

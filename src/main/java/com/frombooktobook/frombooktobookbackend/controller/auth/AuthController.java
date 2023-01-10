@@ -1,7 +1,7 @@
 package com.frombooktobook.frombooktobookbackend.controller.auth;
 
 import com.frombooktobook.frombooktobookbackend.controller.auth.dto.*;
-import com.frombooktobook.frombooktobookbackend.controller.user.PasswordChangeRequestDto;
+import com.frombooktobook.frombooktobookbackend.controller.user.dto.PasswordChangeRequestDto;
 import com.frombooktobook.frombooktobookbackend.domain.user.ProviderType;
 import com.frombooktobook.frombooktobookbackend.domain.user.Role;
 import com.frombooktobook.frombooktobookbackend.domain.user.User;

@@ -1,7 +1,7 @@
 package com.frombooktobook.frombooktobookbackend.service;
 
 import com.frombooktobook.frombooktobookbackend.controller.auth.dto.EmailVertifyRequestDto;
-import com.frombooktobook.frombooktobookbackend.controller.user.PasswordChangeRequestDto;
+import com.frombooktobook.frombooktobookbackend.controller.user.dto.PasswordChangeRequestDto;
 import com.frombooktobook.frombooktobookbackend.domain.comment.CommentRepository;
 import com.frombooktobook.frombooktobookbackend.domain.liked.LikedRepository;
 import com.frombooktobook.frombooktobookbackend.domain.user.Role;

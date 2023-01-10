@@ -1,5 +1,7 @@
 package com.frombooktobook.frombooktobookbackend.controller.liked;
 
+import com.frombooktobook.frombooktobookbackend.controller.liked.dto.LikedRequestDto;
+import com.frombooktobook.frombooktobookbackend.controller.liked.dto.LikedResponseDto;
 import com.frombooktobook.frombooktobookbackend.controller.post.dto.PostResponseDto;
 import com.frombooktobook.frombooktobookbackend.service.LikedService;
 import lombok.RequiredArgsConstructor;

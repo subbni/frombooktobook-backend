@@ -1,4 +1,4 @@
-package com.frombooktobook.frombooktobookbackend.controller.liked;
+package com.frombooktobook.frombooktobookbackend.controller.liked.dto;
 
 import com.frombooktobook.frombooktobookbackend.domain.liked.LikedRepository;
 import lombok.Getter;

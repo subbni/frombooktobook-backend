@@ -8,13 +8,13 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class RegisterRequestDto {
+public class SignUpRequestDto {
     private String email;
     private String name;
     private String password;
 
     @Builder
-    public RegisterRequestDto(String email, String name, String password) {
+    public SignUpRequestDto(String email, String name, String password) {
         this.email= email;
         this.name=name;
         this.password = password;

@@ -56,7 +56,7 @@ public class AuthService {
         return authentication;
     }
 
-    public void singUp(SignUpRequestDto requestDto) {
+    public void signUp(SignUpRequestDto requestDto) {
         if(userRepository.existsByEmail(requestDto.getEmail())) {
             throw new BadRequestException("이미 가입된 이메일입니다.");
         }

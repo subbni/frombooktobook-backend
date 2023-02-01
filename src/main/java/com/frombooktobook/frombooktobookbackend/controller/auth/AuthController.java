@@ -36,7 +36,7 @@ public class AuthController {
     @PostMapping("/sign-up")
     public ResponseEntity<?> registerUser(@RequestBody SignUpRequestDto requestDto) {
         try{
-            authService.singUp(requestDto);
+            authService.signUp(requestDto);
             return ResponseEntity.ok(new ApiResponseDto(true, "User registered successfully ! "));
         } catch(Exception e) {
             return ResponseEntity.ok(new ApiResponseDto(false,e.getMessage()));

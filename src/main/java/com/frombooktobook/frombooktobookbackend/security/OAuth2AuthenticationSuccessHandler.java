@@ -3,7 +3,7 @@ package com.frombooktobook.frombooktobookbackend.security;
 import com.frombooktobook.frombooktobookbackend.configuration.AppProperties;
 import com.frombooktobook.frombooktobookbackend.exception.BadRequestException;
 import com.frombooktobook.frombooktobookbackend.security.jwt.TokenProvider;
-import com.frombooktobook.frombooktobookbackend.util.CookieUtils;
+import com.frombooktobook.frombooktobookbackend.util.CookieUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -50,7 +50,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     // 최종 리다이렉션 시킬 Url을 작성하는 메소드. token도 포함시킨다.
     protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-        Optional<String> redirectUri = CookieUtils.getCookie(request,REDIRECT_URI_PARAM_COOKIE_NAME)
+        Optional<String> redirectUri = CookieUtil.getCookie(request,REDIRECT_URI_PARAM_COOKIE_NAME)
                 .map(Cookie::getValue);
 
         if(redirectUri.isPresent() && !isAuthorizedRedirectUri(redirectUri.get())) {

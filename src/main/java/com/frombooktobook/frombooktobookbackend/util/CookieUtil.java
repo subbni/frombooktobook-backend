@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Base64;
 import java.util.Optional;
 
-public class CookieUtils {
+public class CookieUtil {
 
     // request에서 키가 name인 쿠키 가져오기
     public static Optional<Cookie> getCookie(HttpServletRequest request, String name) {

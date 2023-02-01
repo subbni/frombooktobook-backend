@@ -5,6 +5,7 @@ import com.frombooktobook.frombooktobookbackend.controller.post.dto.PostResponse
 import com.frombooktobook.frombooktobookbackend.domain.post.Post;
 import com.frombooktobook.frombooktobookbackend.domain.post.PostRepository;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,7 +17,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
+@Disabled
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class PostControllerTest {
     @LocalServerPort

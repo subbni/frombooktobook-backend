@@ -1,6 +1,6 @@
 package com.frombooktobook.frombooktobookbackend.controller.post.dto;
 
-import com.frombooktobook.frombooktobookbackend.domain.Book;
+import com.frombooktobook.frombooktobookbackend.domain.post.Book;
 import com.frombooktobook.frombooktobookbackend.domain.post.Post;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

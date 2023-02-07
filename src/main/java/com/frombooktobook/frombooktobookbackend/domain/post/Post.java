@@ -1,7 +1,6 @@
 package com.frombooktobook.frombooktobookbackend.domain.post;
 
 import com.frombooktobook.frombooktobookbackend.domain.BaseTimeEntity;
-import com.frombooktobook.frombooktobookbackend.domain.Book;
 import com.frombooktobook.frombooktobookbackend.domain.user.User;
 import lombok.Builder;
 import lombok.Getter;

@@ -1,8 +1,7 @@
 package com.frombooktobook.frombooktobookbackend.security;
 
-import com.frombooktobook.frombooktobookbackend.util.CookieUtils;
+import com.frombooktobook.frombooktobookbackend.util.CookieUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
@@ -31,7 +30,7 @@ public class OAuth2AuthenticationFailureHandler extends SimpleUrlAuthenticationF
         throws IOException, ServletException {
 
 
-        String targetUrl = CookieUtils.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)
+        String targetUrl = CookieUtil.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)
                 .map(Cookie::getValue)
                 .orElse("/");
 

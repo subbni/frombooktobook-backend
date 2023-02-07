@@ -3,7 +3,7 @@ package com.frombooktobook.frombooktobookbackend.service;
 import com.frombooktobook.frombooktobookbackend.controller.post.dto.PostCreateRequestDto;
 import com.frombooktobook.frombooktobookbackend.controller.post.dto.PostResponseDto;
 import com.frombooktobook.frombooktobookbackend.controller.post.dto.PostUpdateRequestDto;
-import com.frombooktobook.frombooktobookbackend.domain.Book;
+import com.frombooktobook.frombooktobookbackend.domain.post.Book;
 import com.frombooktobook.frombooktobookbackend.domain.comment.CommentRepository;
 import com.frombooktobook.frombooktobookbackend.domain.liked.LikedRepository;
 import com.frombooktobook.frombooktobookbackend.domain.post.Post;

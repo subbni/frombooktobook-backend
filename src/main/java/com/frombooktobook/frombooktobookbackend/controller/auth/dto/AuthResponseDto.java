@@ -9,6 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class AuthResponseDto {
+    private boolean success;
     private String name;
     private String email;
     private String accessToken;
@@ -20,5 +21,8 @@ public class AuthResponseDto {
         this.email=email;
     }
 
-
+    public AuthResponseDto setSuccess(boolean success) {
+        this.success = success;
+        return this;
+    }
 }

@@ -68,25 +68,23 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
 
     // 회원가입 진행
     @Transactional
-    private User registerUser(OAuth2UserInfo userInfo, ProviderType providerType) {
+    User registerUser(OAuth2UserInfo userInfo, ProviderType providerType) {
         User user = userRepository.save(
                 User.builder()
                 .email(userInfo.getEmail())
                         .name(userInfo.getName())
-                .role(Role.AUTHENTICATED)
+                .role(Role.USER)
                 .imgUrl(userInfo.getImageUrl())
                 .providerType(providerType)
                 .build());
-        user.setMailVerified(true);
         System.out.println("*******회원가입 실행**********");
-        System.out.println(user.getMailVerified());
         return user;
 
     }
 
     // 업데이트
     @Transactional
-    private User updateUser(User user, OAuth2UserInfo userInfo) {
+     User updateUser(User user, OAuth2UserInfo userInfo) {
         if(userInfo.getName()!=null && !user.getName().equals(userInfo.getName())) {
             user.setName(userInfo.getName());
         }

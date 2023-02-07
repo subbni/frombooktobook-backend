@@ -8,8 +8,8 @@ import com.frombooktobook.frombooktobookbackend.domain.user.Role;
 import com.frombooktobook.frombooktobookbackend.domain.user.User;
 import com.frombooktobook.frombooktobookbackend.domain.user.UserRepository;
 import com.frombooktobook.frombooktobookbackend.exception.BadRequestException;
+import com.frombooktobook.frombooktobookbackend.exception.EmailVerifyCodeNotMatchException;
 import com.frombooktobook.frombooktobookbackend.exception.WrongPasswordException;
-import com.frombooktobook.frombooktobookbackend.mail.MailService;
 import com.frombooktobook.frombooktobookbackend.security.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,6 +18,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -29,26 +32,25 @@ public class AuthService {
     private final UserService userService;
     private final MailService mailService;
 
-
     public AuthResponseDto login(LoginRequestDto requestDto) {
         if(!userRepository.existsByEmail(requestDto.getEmail())) {
             throw new BadRequestException("존재하지 않는 이메일 계정입니다.");
         }
 
         User user = userService.findByEmail(requestDto.getEmail());
-        if(!userService.checkIfPasswordIsCorrect(user, requestDto.getPassword())) {
+        if(!checkIfPasswordIsCorrect(user, requestDto.getPassword())) {
             throw new WrongPasswordException("잘못된 비밀번호 입니다.");
         }
 
-        Authentication authentication = loginProcess(user);
+        Authentication authentication = loginProcess(requestDto);
         return new AuthResponseDto(tokenProvider.createToken(authentication),user.getName(),user.getEmail());
     }
 
-    public Authentication loginProcess(User user) {
+    public Authentication loginProcess(LoginRequestDto requestDto) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        user.getEmail(),
-                        user.getPassword()
+                        requestDto.getEmail(),
+                        requestDto.getPassword()
                 )
         );
 
@@ -56,7 +58,7 @@ public class AuthService {
         return authentication;
     }
 
-    public void singUp(SignUpRequestDto requestDto) {
+    public void signUp(SignUpRequestDto requestDto) {
         if(userRepository.existsByEmail(requestDto.getEmail())) {
             throw new BadRequestException("이미 가입된 이메일입니다.");
         }
@@ -72,6 +74,25 @@ public class AuthService {
         );
     }
 
+    @Transactional
+    public void sendMailCode(String email) throws Exception {
+        mailService.sendVerifyEmail(email,createRandomCode(6));
+    }
 
+    @Transactional
+    public void verifyMailCode(String code) {
+        if(!mailService.verifyEmailCode(code)) {
+            throw new EmailVerifyCodeNotMatchException("이메일 인증 코드가 일치하지 않습니다.");
+        }
+    }
+
+    public boolean checkIfPasswordIsCorrect(User user, String password) {
+        String realPassword = user.getPassword();
+        return passwordEncoder.matches(password,realPassword);
+    }
+
+    public String createRandomCode(int length) {
+        return UUID.randomUUID().toString().substring(0,length);
+    }
 
 }

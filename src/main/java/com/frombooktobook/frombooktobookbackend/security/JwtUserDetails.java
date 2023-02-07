@@ -39,7 +39,7 @@ public class JwtUserDetails implements UserDetails, OAuth2User {
 
     public static JwtUserDetails create(User user, String roleKey) {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_AUTHENTICATED"));
+        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
         return new JwtUserDetails(
                 user.getId(),
                 user.getEmail(),

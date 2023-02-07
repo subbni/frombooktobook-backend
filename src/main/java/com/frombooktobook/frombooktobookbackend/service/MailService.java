@@ -1,24 +1,30 @@
-package com.frombooktobook.frombooktobookbackend.mail;
+package com.frombooktobook.frombooktobookbackend.service;
 
-import com.frombooktobook.frombooktobookbackend.domain.user.User;
-import com.nimbusds.oauth2.sdk.auth.Secret;
+import com.frombooktobook.frombooktobookbackend.util.RedisUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.mail.Message;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.Random;
 
-@Component
+
+@RequiredArgsConstructor
+@Service
 public class MailService {
+    private final JavaMailSender javaMailSender;
+    private final RedisUtil redisUtil;
 
-    @Autowired
-    private JavaMailSender javaMailSender;
-
+    @Value("${spring.redis.expireMinutes}")
+    private long expireMin;
+    @Value("${spring.mail.from}")
+    private String fromAddress;
 
     public void sendMail(String email, MimeMessage message) throws Exception{
         try{
@@ -40,7 +46,7 @@ public class MailService {
         message.addRecipients(Message.RecipientType.TO,email);
         message.setSubject("FromBookToBook 요청하신 임시 비밀번호입니다.");
         message.setText(createTempPasswordText(tempPassword),"utf-8","html");
-        message.setFrom("suddni@naver.com");
+        message.setFrom(fromAddress);
         return message;
     }
 
@@ -57,22 +63,23 @@ public class MailService {
         return text;
     }
 
-    public void sendVertifyEmail(String email, String code) throws Exception {
-        MimeMessage mimeMessage = createEmailVertifyMessage(email,code);
+    public void sendVerifyEmail(String email, String code) throws Exception {
+        MimeMessage mimeMessage = createEmailVerifyMessage(email,code);
         sendMail(email,mimeMessage);
+        redisUtil.setData(code,email,expireMin);
     }
 
-    private MimeMessage createEmailVertifyMessage(String email, String code) throws Exception{
+    private MimeMessage createEmailVerifyMessage(String email, String code) throws Exception{
         MimeMessage message = javaMailSender.createMimeMessage();
 
         message.addRecipients(Message.RecipientType.TO,email);
         message.setSubject("FromBookToBook 이메일 인증 코드입니다.");
-        message.setText(createEmailVertifyText(code),"utf-8","html");
-        message.setFrom(new InternetAddress("suddni@naver.com","FromBookToBook"));
+        message.setText(createEmailVerifyText(code),"utf-8","html");
+        message.setFrom(new InternetAddress(fromAddress,"FromBookToBook"));
         return message;
     }
 
-    private String createEmailVertifyText(String code) {
+    private String createEmailVerifyText(String code) {
         String text = "";
         text += "아래 코드를 FromBookToBook 이메일 인증 코드란에 입력해주세요.";
         text += "<br>";
@@ -81,6 +88,14 @@ public class MailService {
         text += "</strong>";
 
         return text;
+    }
+
+    public boolean verifyEmailCode(String code) {
+        String email = redisUtil.getData(code);
+        if(email == null) {
+            return false;
+        }
+        return true;
     }
 
     private int makeRandomNumber() {

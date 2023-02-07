@@ -6,7 +6,7 @@ import com.frombooktobook.frombooktobookbackend.domain.user.User;
 import com.frombooktobook.frombooktobookbackend.exception.BadRequestException;
 import com.frombooktobook.frombooktobookbackend.exception.ResourceNotFoundException;
 import com.frombooktobook.frombooktobookbackend.exception.WrongPasswordException;
-import com.frombooktobook.frombooktobookbackend.mail.MailService;
+import com.frombooktobook.frombooktobookbackend.service.MailService;
 import com.frombooktobook.frombooktobookbackend.service.AuthService;
 import com.frombooktobook.frombooktobookbackend.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequestDto loginRequest) {
         try{
-            return ResponseEntity.ok(authService.login(loginRequest));
+            return ResponseEntity.ok(authService.login(loginRequest).setSuccess(true));
         }catch(WrongPasswordException | BadRequestException e) {
             return ResponseEntity.ok(new ApiResponseDto(false,e.getMessage())); // TODO: 수정 필요
         }
@@ -36,41 +36,38 @@ public class AuthController {
     @PostMapping("/sign-up")
     public ResponseEntity<?> registerUser(@RequestBody SignUpRequestDto requestDto) {
         try{
-            authService.singUp(requestDto);
+            authService.signUp(requestDto);
             return ResponseEntity.ok(new ApiResponseDto(true, "User registered successfully ! "));
         } catch(Exception e) {
             return ResponseEntity.ok(new ApiResponseDto(false,e.getMessage()));
         }
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
-    @GetMapping("/email-verify/{email}")
-    public ApiResponseDto sendEmailVertifyCode(@PathVariable String email) {
-        if(userService.checkIfVertified(email)) {
-            return new ApiResponseDto(false,"이미 인증된 이메일입니다.");
+    @GetMapping("/email-code/{email}")
+    public ApiResponseDto sendEmailVerifyCode(@PathVariable String email) {
+        if(userService.checkIfExistedEmail(email)) {
+            return new ApiResponseDto(false,"이미 가입된 이메일입니다.");
         }
 
         try{
-            String code = userService.setMailCode(email);
-            mailService.sendVertifyEmail(email,code);
+            authService.sendMailCode(email);
             return new ApiResponseDto(true,"이메일 인증 코드가 메일로 전송되었습니다.");
         } catch(Exception e) {
             return new ApiResponseDto(false,e.getMessage());
         }
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
-    @PostMapping("/email-verify")
-    public ApiResponseDto vertifyEmailCode(@RequestBody EmailVertifyRequestDto  requestDto) {
+    @GetMapping("/email-verify/{code}")
+    public ApiResponseDto verifyEmailCode(@PathVariable String code) {
         try {
-            userService.vertifyMailCode(requestDto);
+            authService.verifyMailCode(code);
             return new ApiResponseDto(true,"이메일 인증이 완료되었습니다.");
         } catch(Exception e) {
             return new ApiResponseDto(false,e.getMessage());
         }
     }
 
-    @GetMapping("/password/temporary")
+    @GetMapping("/password/temporary/{email}")
     public ApiResponseDto issueTemporaryPassword(@PathVariable String email) {
         try{
             User user = userService.findByEmail(email);
@@ -84,14 +81,14 @@ public class AuthController {
         }
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
-    @PostMapping("/password/change")
-    public ApiResponseDto changePassword(@RequestBody PasswordChangeRequestDto requestDto) {
-        try {
-            userService.changePasswordToNewPassword(requestDto);
-            return new ApiResponseDto(true, "password successfully changed.");
-        } catch (Exception e) {
-            return new ApiResponseDto(false, e.getMessage());
-        }
-    }
+//    @PreAuthorize("hasRole('ROLE_USER')")
+//    @PostMapping("/password/change")
+//    public ApiResponseDto changePassword(@RequestBody PasswordChangeRequestDto requestDto) {
+//        try {
+//            userService.changePasswordToNewPassword(requestDto);
+//            return new ApiResponseDto(true, "password successfully changed.");
+//        } catch (Exception e) {
+//            return new ApiResponseDto(false, e.getMessage());
+//        }
+//    }
 }

@@ -114,7 +114,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/auth/**","/oauth2/**","/mail/**")
                 .permitAll()
                 // 기본 게시물 둘러보기는 누구나 가능하도록
-                .antMatchers("/post/show/**")
+                .antMatchers("/post")
                 .permitAll()
                 .anyRequest()
                 .authenticated()

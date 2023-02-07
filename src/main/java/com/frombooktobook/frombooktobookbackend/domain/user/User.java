@@ -40,12 +40,6 @@ public class User extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private ProviderType providerType;
 
-    @Column(name="mail_code")
-    private String mailCode;
-
-    @Column(name="mail_verified")
-    private boolean mailVerified;
-
     @Builder
     public User(String email, String name, String password, String imgUrl, Role role, ProviderType providerType) {
         this.email = email;
@@ -71,16 +65,6 @@ public class User extends BaseTimeEntity {
         return this;
     }
 
-    public User setMailCode(String mailCode) {
-        this.mailCode = mailCode;
-        return this;
-    }
-
-    public User setMailVerified(boolean mailVerified) {
-        this.mailVerified = mailVerified;
-        return this;
-    }
-
     public User setRole(Role role) {
         this.role = role;
         return this;
@@ -94,10 +78,6 @@ public class User extends BaseTimeEntity {
 
     public String getRoleKey() {
         return this.role.getKey();
-    }
-
-    public boolean getMailVerified() {
-        return this.mailVerified;
     }
 
 }

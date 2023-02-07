@@ -2,7 +2,6 @@ package com.frombooktobook.frombooktobookbackend.controller.user;
 import com.frombooktobook.frombooktobookbackend.controller.auth.dto.ApiResponseDto;
 import com.frombooktobook.frombooktobookbackend.domain.user.User;
 import com.frombooktobook.frombooktobookbackend.exception.ResourceNotFoundException;
-import com.frombooktobook.frombooktobookbackend.mail.MailService;
 import com.frombooktobook.frombooktobookbackend.security.CurrentUser;
 import com.frombooktobook.frombooktobookbackend.security.JwtUserDetails;
 import com.frombooktobook.frombooktobookbackend.service.UserService;
@@ -29,10 +28,9 @@ public class UserController {
 
     @GetMapping("/existed-or-not")
     public ApiResponseDto checkIfExistEmail(@PathVariable String email) {
-        try {
-            User user = userService.findByEmail(email);
+        if(userService.checkIfExistedEmail(email)) {
             return new ApiResponseDto(true, "email exists.");
-        } catch (ResourceNotFoundException e) {
+        }else {
             return new ApiResponseDto(false, "email not exists.");
         }
     }

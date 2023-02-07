@@ -1,5 +1,6 @@
 package com.frombooktobook.frombooktobookbackend.service;
 
+import com.frombooktobook.frombooktobookbackend.controller.auth.dto.ApiResponseDto;
 import com.frombooktobook.frombooktobookbackend.controller.auth.dto.EmailVertifyRequestDto;
 import com.frombooktobook.frombooktobookbackend.controller.user.dto.PasswordChangeRequestDto;
 import com.frombooktobook.frombooktobookbackend.domain.comment.CommentRepository;
@@ -38,6 +39,15 @@ public class UserService {
         return member;
     }
 
+    public boolean checkIfExistedEmail(String email) {
+        try {
+            User user = findByEmail(email);
+            return true;
+        } catch (ResourceNotFoundException e) {
+            return false;
+        }
+    }
+
     public User getCurrentUser(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(()->new ResourceNotFoundException("User","id",id));
@@ -57,56 +67,18 @@ public class UserService {
         return tempPassword;
     }
 
-    @Transactional
-    public void changePasswordToNewPassword(PasswordChangeRequestDto requestDto) {
-        User user = findByEmail(requestDto.getEmail());
-        if(checkIfPasswordIsCorrect(user,requestDto.getCurrentPassword())) {
-            user.setPassword(passwordEncoder.encode(requestDto.getNewPassword()));
-        } else {
-            throw new WrongPasswordException("password wrong.");
-        }
-    }
+//    @Transactional
+//    public void changePasswordToNewPassword(PasswordChangeRequestDto requestDto) {
+//        User user = findByEmail(requestDto.getEmail());
+//        if(checkIfPasswordIsCorrect(user,requestDto.getCurrentPassword())) {
+//            user.setPassword(passwordEncoder.encode(requestDto.getNewPassword()));
+//        } else {
+//            throw new WrongPasswordException("password wrong.");
+//        }
+//    }
 
 
-    public boolean checkIfPasswordIsCorrect(User user, String password) {
-        String realPassword = user.getPassword();
-        System.out.println(realPassword+"::"+passwordEncoder.encode(password));
-        return passwordEncoder.matches(password,realPassword);
-    }
 
-    @Transactional
-    public String setMailCode(String email) {
-        User user = findByEmail(email);
-        String code = createRandomCode(6);
-        user.setMailCode(code);
-        return code;
-    }
-
-
-    @Transactional
-    public void  vertifyMailCode(EmailVertifyRequestDto requestDto) {
-        User user = findByEmail(requestDto.getEmail());
-        if(requestDto.getCode().equals(user.getMailCode())) {
-            setMailVertified(user, true);
-        } else {
-            throw new EmailVerifyCodeNotMatchException("이메일 인증 코드가 일치하지 않습니다.");
-        }
-    }
-
-    @Transactional
-    public void setMailVertified(User user, boolean vertified) {
-        user.setMailVertified(vertified);
-        user.setRole(Role.AUTHENTICATED);
-    }
-
-    public boolean checkIfVertified(String email) {
-        User user = findByEmail(email);
-        if(user.getMailVertified()) {
-            return true;
-        } else {
-            return false;
-        }
-    }
 
     public String createRandomCode(int length) {
         return UUID.randomUUID().toString().substring(0,length);

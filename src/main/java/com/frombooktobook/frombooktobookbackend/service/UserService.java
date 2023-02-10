@@ -59,10 +59,10 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    @Transactional
-    public String changePasswordToTempPassword(User user) {
-        String tempPassword;
-        tempPassword = createRandomCode(8);
+    public boolean checkIfPasswordIsCorrect(String email, String password) {
+        User user = findByEmail(email);
+        String realPassword = user.getPassword();
+        return passwordEncoder.matches(password,realPassword);
     }
 
     @Transactional

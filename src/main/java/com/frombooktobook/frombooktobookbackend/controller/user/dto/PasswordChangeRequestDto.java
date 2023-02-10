@@ -15,15 +15,16 @@ import javax.validation.constraints.NotBlank;
 public class PasswordChangeRequestDto {
     @Email
     private String email;
+
     @NotBlank
     private String currentPassword;
     @NotBlank
     private String newPassword;
 
     @Builder
-    public PasswordChangeRequestDto(String email,String currentPassword, String newPassword) {
+    public PasswordChangeRequestDto(String email, String currentPassword, String newPassword) {
         this.email=email;
-        this.currentPassword = currentPassword;
+        this.currentPassword=currentPassword;
         this.newPassword=newPassword;
     }
 }

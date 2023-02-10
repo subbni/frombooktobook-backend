@@ -36,13 +36,12 @@ public class AuthService {
         if(!userRepository.existsByEmail(requestDto.getEmail())) {
             throw new BadRequestException("존재하지 않는 이메일 계정입니다.");
         }
-
-        User user = userService.findByEmail(requestDto.getEmail());
-        if(!checkIfPasswordIsCorrect(user, requestDto.getPassword())) {
+        if(!userService.checkIfPasswordIsCorrect(requestDto.getEmail(), requestDto.getPassword())) {
             throw new WrongPasswordException("잘못된 비밀번호 입니다.");
         }
 
         Authentication authentication = loginProcess(requestDto);
+        User user = userService.findByEmail(requestDto.getEmail());
         return new AuthResponseDto(tokenProvider.createToken(authentication),user.getName(),user.getEmail());
     }
 
@@ -86,9 +85,11 @@ public class AuthService {
         }
     }
 
-    public boolean checkIfPasswordIsCorrect(User user, String password) {
-        String realPassword = user.getPassword();
-        return passwordEncoder.matches(password,realPassword);
+    @Transactional
+    public void sendTemporaryPassword(String email) throws Exception {
+        String temporaryPassword = createRandomCode(6);
+        mailService.sendTemporaryPasswordEmail(email,temporaryPassword);
+        userService.changePassword(email,temporaryPassword);
     }
 
     public String createRandomCode(int length) {

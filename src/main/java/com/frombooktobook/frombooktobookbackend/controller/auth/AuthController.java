@@ -37,11 +37,12 @@ public class AuthController {
     public ResponseEntity<?> registerUser(@RequestBody SignUpRequestDto requestDto) {
         try{
             authService.signUp(requestDto);
-            return ResponseEntity.ok(new ApiResponseDto(true, "User registered successfully ! "));
+            return ResponseEntity.ok(new ApiResponseDto(true, "회원가입 되었습니다."));
         } catch(Exception e) {
             return ResponseEntity.ok(new ApiResponseDto(false,e.getMessage()));
         }
     }
+
 
     @GetMapping("/email-code/{email}")
     public ApiResponseDto sendEmailVerifyCode(@PathVariable String email) {
@@ -67,28 +68,17 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/password/temporary/{email}")
-    public ApiResponseDto issueTemporaryPassword(@PathVariable String email) {
+    @GetMapping("/email-temporary-password/{email}")
+    public ApiResponseDto sendTemporaryPassword(@PathVariable String email) {
+        if(!userService.checkIfExistedEmail(email)) {
+            return new ApiResponseDto(false,"가입되지 않은 이메일입니다.");
+        }
+
         try{
-            User user = userService.findByEmail(email);
-            String tempPassword = userService.changePasswordToTempPassword(user);
-            mailService.sendTempPasswordEmail(user.getEmail(),tempPassword);
-            return new ApiResponseDto(true, "임시 비밀번호가 메일로 전송되었습니다.");
-        } catch(ResourceNotFoundException e) {
-            return new ApiResponseDto(false, "존재하지 않은 이메일입니다.");
-        } catch(Exception e) {
-            return new ApiResponseDto(false, "mail exception occured.");
+            authService.sendTemporaryPassword(email);
+            return new ApiResponseDto(true,"임시 비밀번호가 메일로 전송되었습니다. 로그인 후 비밀번호를 변경해주세요.");
+        }catch (Exception e) {
+            return new ApiResponseDto(false,e.getMessage());
         }
     }
-
-//    @PreAuthorize("hasRole('ROLE_USER')")
-//    @PostMapping("/password/change")
-//    public ApiResponseDto changePassword(@RequestBody PasswordChangeRequestDto requestDto) {
-//        try {
-//            userService.changePasswordToNewPassword(requestDto);
-//            return new ApiResponseDto(true, "password successfully changed.");
-//        } catch (Exception e) {
-//            return new ApiResponseDto(false, e.getMessage());
-//        }
-//    }
 }

@@ -59,29 +59,15 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public boolean checkIfPasswordIsCorrect(String email, String password) {
+        User user = findByEmail(email);
+        String realPassword = user.getPassword();
+        return passwordEncoder.matches(password,realPassword);
+    }
+
     @Transactional
-    public String changePasswordToTempPassword(User user) {
-        String tempPassword;
-        tempPassword = createRandomCode(8);
-        user.setPassword(passwordEncoder.encode(tempPassword));
-        return tempPassword;
+    public void changePassword(String email, String newPassword) throws Exception{
+        User user = findByEmail(email);
+        user.setPassword(passwordEncoder.encode(newPassword));
     }
-
-//    @Transactional
-//    public void changePasswordToNewPassword(PasswordChangeRequestDto requestDto) {
-//        User user = findByEmail(requestDto.getEmail());
-//        if(checkIfPasswordIsCorrect(user,requestDto.getCurrentPassword())) {
-//            user.setPassword(passwordEncoder.encode(requestDto.getNewPassword()));
-//        } else {
-//            throw new WrongPasswordException("password wrong.");
-//        }
-//    }
-
-
-
-
-    public String createRandomCode(int length) {
-        return UUID.randomUUID().toString().substring(0,length);
-    }
-
 }

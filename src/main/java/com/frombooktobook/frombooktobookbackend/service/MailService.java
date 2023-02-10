@@ -2,11 +2,9 @@ package com.frombooktobook.frombooktobookbackend.service;
 
 import com.frombooktobook.frombooktobookbackend.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import javax.mail.Message;
@@ -35,7 +33,7 @@ public class MailService {
         }
     }
 
-    public void sendTempPasswordEmail(String email,String tempPassword) throws Exception{
+    public void sendTemporaryPasswordEmail(String email, String tempPassword) throws Exception{
             MimeMessage mimeMessage = createTempPasswordMessage(email,tempPassword);
             sendMail(email,mimeMessage);
     }
@@ -46,7 +44,7 @@ public class MailService {
         message.addRecipients(Message.RecipientType.TO,email);
         message.setSubject("FromBookToBook 요청하신 임시 비밀번호입니다.");
         message.setText(createTempPasswordText(tempPassword),"utf-8","html");
-        message.setFrom(fromAddress);
+        message.setFrom(new InternetAddress(fromAddress,"FromBookToBook"));
         return message;
     }
 
@@ -75,7 +73,7 @@ public class MailService {
         message.addRecipients(Message.RecipientType.TO,email);
         message.setSubject("FromBookToBook 이메일 인증 코드입니다.");
         message.setText(createEmailVerifyText(code),"utf-8","html");
-        message.setFrom(new InternetAddress(fromAddress,"FromBookToBook"));
+
         return message;
     }
 
